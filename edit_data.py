@@ -14,7 +14,7 @@ def edit_data(path_from, path_to):
             cleaned_lines.append(line.strip())
 
     # Column labelling
-    header = "age, workclass, fnlwgt, education, education-num, marital-status	, occupation , relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
+    header = "age, workclass, fnlwgt, education, education-num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
 
     # add header and empty line
     cleaned_data = [header] + cleaned_lines
