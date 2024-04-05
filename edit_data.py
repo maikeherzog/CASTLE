@@ -10,13 +10,13 @@ def edit_data(path_from, path_to):
 
     for line in lines:
         # Check for '?' in the line
-        if '?' not in line:
+        if '?' not in line and line.strip():
             cleaned_lines.append(line.strip())
 
     # Column labelling
     header = "age, workclass, fnlwgt, education, education-num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
 
-    # add header and empty line
+    # add header and cleaned lines
     cleaned_data = [header] + cleaned_lines
 
     # Write the cleaned data to a new file
