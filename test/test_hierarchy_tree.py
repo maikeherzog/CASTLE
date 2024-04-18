@@ -1,4 +1,4 @@
-from hierarchy_tree import *
+from src.hierarchy_tree import *
 
 def test_generalization_romantic_partner():
     attributes = ["Wife", "Husband"]

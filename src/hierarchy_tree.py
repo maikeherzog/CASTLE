@@ -54,7 +54,7 @@ marital_status_tree: Node = Node("Any marital-status",[
     ])
 ])
 
-employment_tree: Node = Node("Any Employment",[
+workclass_tree: Node = Node("Any Workclass",[
     Node("Private"),
     Node("Self-Employed",[
         Node("Self-emp-not-inc"),
