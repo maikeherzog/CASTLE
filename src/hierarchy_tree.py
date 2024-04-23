@@ -27,7 +27,7 @@ relationship_tree = {
     ]
 }
 
-education_tree_dict = {
+education_tree = {
     'name': 'Any Education',
     'children': [
         {'name': 'Preschool'},
@@ -64,7 +64,18 @@ education_tree_dict = {
     ]
 }
 
-marital_status_tree_dict = {
+race_tree = {
+    'name': 'Any Race',
+    'children': [
+        {'name': 'White'},
+        {'name': 'Asian-Pac-Islander'},
+        {'name': 'Amer-Indian-Eskimo'},
+        {'name': 'Other'},
+        {'name': 'Black'}
+    ]
+}
+
+marital_status_tree = {
     'name': 'Any marital-status',
     'children': [
         {
@@ -87,7 +98,7 @@ marital_status_tree_dict = {
     ]
 }
 
-workclass_tree_dict = {
+workclass_tree = {
     'name': 'Any Workclass',
     'children': [
         {'name': 'Private'},
@@ -116,7 +127,7 @@ workclass_tree_dict = {
     ]
 }
 
-sex_tree_dict = {
+sex_tree = {
     'name': 'Any Sex',
     'children': [
         {'name': 'Female'},
@@ -126,7 +137,7 @@ sex_tree_dict = {
 
 
 
-native_country_tree_dict = {
+native_country_tree = {
     'name': 'Any native country',
     'children': [
         {
@@ -273,7 +284,7 @@ native_country_tree_dict = {
     ]
 }
 
-occupation_tree_dict = {
+occupation_tree = {
     'name': 'Any occupation',
     'children': [
         {
