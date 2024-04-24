@@ -1,5 +1,3 @@
-from Node import *
-
 relationship_tree = {
     'name': 'Any Relationship',
     'children': [
