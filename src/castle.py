@@ -1,4 +1,5 @@
 from src.edit_data import attribute_properties
+from src.tree_functions import *
 
 
 def Enlargement(cluster, tupel):
@@ -40,7 +41,10 @@ def VInfoLoss_continuos(attribut_range, domain_range):
         return (attribut_range[0])/(domain_range[1]-domain_range[0])
     return (attribut_range[1]- attribut_range[0])/(domain_range[1]-domain_range[0])
 
-def VInfoLoss_cathegorical(attribut_range, domain_range):
+def VInfoLoss_cathegorical(attribut_range, domain_tree):
     enlargement = 0
-    return enlargement
+    domain_range = count_all_leaves(domain_tree)
+    attribute_range_generalized = find_generalization(domain_tree, attribut_range)
+    generalized_range = count_all_leaves(get_subtree(domain_tree, attribute_range_generalized))
+    return generalized_range/domain_range
 
