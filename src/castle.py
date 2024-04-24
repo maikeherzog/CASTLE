@@ -42,7 +42,6 @@ def VInfoLoss_continuos(attribut_range, domain_range):
     return (attribut_range[1]- attribut_range[0])/(domain_range[1]-domain_range[0])
 
 def VInfoLoss_cathegorical(attribut_range, domain_tree):
-    enlargement = 0
     domain_range = count_all_leaves(domain_tree)
     attribute_range_generalized = find_generalization(domain_tree, attribut_range)
     generalized_range = count_all_leaves(get_subtree(domain_tree, attribute_range_generalized))
