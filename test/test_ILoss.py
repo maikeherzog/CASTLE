@@ -23,6 +23,11 @@ education_tree_test = {
     ]
 }
 
+attribute_properties_test = {
+    0: {'name': 'age', 'type': 'continuous', 'interval': (18, 120)},
+    1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_test}
+}
+
 class TestEnlargementFunction(unittest.TestCase):
 
     def test_enlargement(self):
