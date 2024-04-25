@@ -317,6 +317,27 @@ occupation_tree = {
     ]
 }
 
+education_tree_test = {
+    'name': 'Any Education',
+    'children': [
+        {
+            'name': 'Secondary',
+            'children' : [
+                {'name': 'Primary School'},
+                {'name': 'Secondary School'}
+            ]
+        },
+
+        {
+            'name': 'University',
+            'children': [
+                {'name': 'Bachelors'},
+                {'name': 'Masters'},
+                {'name': 'Ph.D'}
+            ]
+        }
+    ]
+}
 
 
 
