@@ -1,3 +1,6 @@
+from src.edit_data import attribute_properties_test
+
+
 class Cluster:
   """
   Ein k-anonymisierter Cluster.
@@ -17,6 +20,9 @@ class Cluster:
 
     return len(self.data)
 
+  def __str__(self):
+    return str(self.t) + ', ' + ', '.join(str(t) for t in self.data[1:])
+
   def add_tupel(self, t):
     """
     Fügt einen Datensatz zum Cluster hinzu.
@@ -26,13 +32,43 @@ class Cluster:
     """
 
     self.data.append(t)
+    cluster = list(self.t)
+    for i in range(len(self.t)):
+        if attribute_properties_test[i]['type'] == 'continuous':
+            cluster[i] = self.adjust_interval(t[i], cluster[i])
 
-  def __len__(self):
-    """
-    Gibt die Anzahl der Datensätze in diesem Cluster zurück.
-    """
+        elif attribute_properties_test[i]['type'] == 'cathegorical':
+            cluster[i] = self.add_unique_string_to_list(t[i], cluster[i])
+    self.t = tuple(cluster)
 
-    return len(self.data)
+  def adjust_interval(self, value, interval):
+    # Wenn das Intervall nur eine einzelne Zahl enthält
+    if isinstance(interval, int):
+      if value < interval:
+        return [value, interval]
+      else:
+        return [interval, value]
+
+    # Wenn das Intervall ein normaler Bereich ist
+    else:
+      lower_bound, upper_bound = interval
+
+      if value < lower_bound:
+        lower_bound = value
+      elif value > upper_bound:
+        upper_bound = value
+
+      return [lower_bound, upper_bound]
+
+  def add_unique_string_to_list(self, value, value_list):
+    # Falls value_list ein String ist, machen wir daraus eine Liste
+    if isinstance(value_list, str):
+      value_list = [value_list]
+
+    if value not in value_list:
+      value_list.append(value)
+    return value_list
+
 
   def is_k_anonymous(self, k, δ, β):
     """
@@ -65,6 +101,22 @@ class Cluster:
     # TODO: Implementieren Sie die Prüfung, ob der Datensatz hinzugefügt werden kann
 
     return True
+
+  def output_tuples(self):
+    for tupel in self.data:
+      # Erstelle ein neues Tupel, beginnend mit den generalisierten Werten
+      generalized_tupel = [x for x in self.t[:len(tupel)]]
+
+      # Wenn das Originaltupel länger ist als t, füge die zusätzlichen Werte hinzu
+      if len(tupel) > len(self.t):
+        for extra in tupel[len(self.t):]:
+          generalized_tupel.append(extra)
+
+      # Umwandlung in Tupel und Ausgaben
+      print("Output:", tuple(generalized_tupel))
+      """for tupel in self.data:
+          generalized_tupel = (self.t[0], [edu for edu in self.t[1] if edu == tupel[1]])
+          print("Output:", generalized_tupel)"""
 
   """
   def tuple_enlargement(self, tupel, global_ranges: Dict[str, Range]) -> float:
