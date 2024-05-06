@@ -1,6 +1,6 @@
 import unittest
 
-from src.castle import Enlargement
+from src.Castle import Enlargement
 
 education_tree_test = {
     'name': 'Any Education',
