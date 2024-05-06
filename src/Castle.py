@@ -3,10 +3,25 @@ from src.edit_data import attribute_properties, attribute_properties_test
 from src.tree_functions import *
 
 # Initialisierung
+cluster1 = Cluster(([18, 22], ['Primary School', 'Bachelors']))
+cluster2 = Cluster(([26, 28], ['Masters', 'Bachelors']))
+cluster3 = Cluster(([18, 22], ['Masters', 'Bachelors']))
+
 not_anonymized_clusters = set()  # Set of non-ks-anonymized clusters der Klasse Cluster
+not_anonymized_clusters.add(cluster1)
+not_anonymized_clusters.add(cluster2)
+not_anonymized_clusters.add(cluster3)
+#not_anonymized_clusters = {([18,22], ['Primary School', 'Bachelors']), ([26,28], ['Masters', 'Bachelors'])}
+#not_anonymized_clusters = {(tuple([18,22]), tuple(['Primary School', 'Bachelors'])), (tuple([26,28]), tuple(['Masters', 'Bachelors']))}
+
 anonymized_clusters = set()  # Set of ks-anonymized clusters
 tao = 0
 beta = 2
+
+
+
+
+
 def Castle(S, k, delta, beta):
     """
         Implementierung des CASTLE-Algorithmus.
@@ -22,13 +37,54 @@ def Castle(S, k, delta, beta):
         """
     while S:
         next_tupel = S.pop() #Get the next tupel from S
+        print("pos:", next_tupel[0])
         best_cluster = best_selection(next_tupel)
         if best_cluster is None:
             new_cluster = Cluster(next_tupel)
             not_anonymized_clusters.add(new_cluster)
+            best_cluster = new_cluster
+            print( "new cluster added to not_anonymized_clusters")
         else:
             best_cluster.add_tupel(next_tupel)
+            print("tupel added to cluster")
+            print("best cluster:", best_cluster.t)
 
+        """if next_tupel[0] - delta < 0:
+            tuple_prime = None
+        else:
+            tuple_prime = S[next_tupel[0] - delta]
+        if tuple_prime not in anonymized_clusters:
+            delay_constraint(tuple_prime, best_cluster, k)"""
+
+
+def delay_constraint(tuple_prime, best_cluster, k):
+    # ich übergebe das bestpasssende cluster, dann muss ich es nicht erst neu berechnen
+    if best_cluster.__len__() < k:
+
+        return
+    pass
+
+def output_cluster(cluster, k):
+    if cluster.len() >= 2*k:
+        split_cluster = split(cluster, k)
+    else:
+        split_cluster = {cluster}
+    for cluster in split_cluster:
+        cluster.output_tuples()
+        # TODO: was soll ich hier übergeben?
+        # tao = average_Loss()
+        if InfoLoss(cluster.t) >= tao:
+            anonymized_clusters.add(cluster)
+            #Muss das noch aus den nicht anonymisierten Clustern entfernt werden? Bzw. Müssen die Tuple entfernt werden?
+            #not_anonymized_clusters.remove(cluster)
+        else:
+            # TODO: stimmt das hier so, dass das da entfern werden soll?
+            not_anonymized_clusters.remove(cluster)
+        not_anonymized_clusters.remove(cluster)
+
+def split(cluster, k):
+    split_cluster = set()
+    #TODO: implementieren
 
 def best_selection(tuple):
     enlargements = set()
@@ -150,4 +206,10 @@ def VInfoLoss_cathegorical_cluster(attribut_range, domain_tree):
     generalized_range = len(attribut_range)
     erg = (generalized_range - 1) /(domain_range - 1)
     return erg
+
+def average_Loss(stream,position):
+    sum = 0
+    for tuple in stream and tuple[0] < position:
+        sum += InfoLoss(tuple)
+    return 1/position * sum
 
