@@ -4,16 +4,22 @@ from src.tree_functions import count_all_leaves, find_generalization, get_subtre
 
 
 class Castle:
-    def __init__(self, S, k, delta, beta):
+    def __init__(self, k, delta, beta):
         self.not_anonymized_clusters = set()
         self.anonymized_clusters = set()
         self.tao = 0
         self.beta = beta
         self.k = k
-        self.S = S
+        #self.S = S
         self.delta = delta
 
-    def castle_algo(self):
+    def set_anonymized_clusters(self, anonymized_clusters):
+        self.anonymized_clusters = anonymized_clusters
+
+    def set_not_anonymized_clusters(self, not_anonymized_clusters):
+        self.not_anonymized_clusters = not_anonymized_clusters
+
+    def castle_algo(self, S):
         while self.S:
             next_tupel = self.S.pop()  # Get the next tupel from S
             print("pos:", next_tupel[0])
