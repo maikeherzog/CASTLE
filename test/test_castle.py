@@ -6,7 +6,7 @@ from src.Cluster import Cluster
 
 class TestMergeCluster(unittest.TestCase):
     def test_merge_cluster(self):
-        castle = Castle(6, 5, 2)
+        castle = Castle(None, 6, 5, 2)
         # Erzeugung der Eingabedaten
         cluster1 = Cluster((18, 'Bachelors'))
         cluster1.add_tupel((24, 'Bachelors'))
