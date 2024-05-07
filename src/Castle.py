@@ -79,12 +79,36 @@ def output_cluster(cluster, k):
             #not_anonymized_clusters.remove(cluster)
         else:
             # TODO: stimmt das hier so, dass das da entfern werden soll?
-            not_anonymized_clusters.remove(cluster)
+            del cluster
+            #not_anonymized_clusters.remove(cluster)
         not_anonymized_clusters.remove(cluster)
 
 def split(cluster, k):
     split_cluster = set()
     #TODO: implementieren
+
+def merge_cluster(cluster, set_of_clusters, k):
+    # set_of clusters besteht aus non_anonymized_clusters
+    leng = len(cluster)
+    while len(cluster) < k:
+        min_enlargement = float('inf')
+
+        for c in set_of_clusters:
+            # berechnung der potentiellen Größe des gemergeden Clusters
+            merged_size = len(cluster) + len(c)
+
+            # berechnung des Enlargement
+            enlargement = Enlargement(cluster.t, c.t)
+
+            if enlargement < min_enlargement:
+                min_enlargement = enlargement
+                min_enlargement_cluster = c
+
+        # fügt die Tupel des min_enlargement_cluster zu cluster hinzu
+        for tupel in min_enlargement_cluster.data:
+            cluster.add_tupel(tupel)
+        #not_anonymized_clusters.remove(min_enlargement_cluster)
+    return cluster
 
 def best_selection(tuple):
     enlargements = set()
@@ -157,14 +181,27 @@ def add_tupel(cluster, tupel):
     return tuple(new_cluster)
 
 def adjust_interval(value, interval):
-    lower_bound, upper_bound = interval
+    # wenn beides Intervalle sind
+    if isinstance(value, (list, tuple)) and isinstance(interval, (list, tuple)):
+        return [min(value[0], interval[0]), max(value[1], interval[1])]
 
-    if value < lower_bound:
-        lower_bound = value
-    elif value > upper_bound:
-        upper_bound = value
+    # Wenn das Intervall nur eine einzelne Zahl enthält
+    if isinstance(interval, int):
+        if value < interval:
+            return [value, interval]
+        else:
+            return [interval, value]
 
-    return [lower_bound, upper_bound]
+    # Wenn das Intervall ein normaler Bereich ist
+    else:
+        lower_bound, upper_bound = interval
+
+        if value < lower_bound:
+            lower_bound = value
+        elif value > upper_bound:
+            upper_bound = value
+
+        return [lower_bound, upper_bound]
 
 def add_unique_string_to_list(value, value_list):
     if value not in value_list:
