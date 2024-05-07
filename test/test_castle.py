@@ -1,11 +1,12 @@
 import unittest
 
-from src.Castle import merge_cluster
+from src.Castle import Castle
 from src.Cluster import Cluster
 
 
 class TestMergeCluster(unittest.TestCase):
     def test_merge_cluster(self):
+        castle = Castle(6, 5, 2)
         # Erzeugung der Eingabedaten
         cluster1 = Cluster((18, 'Bachelors'))
         cluster1.add_tupel((24, 'Bachelors'))
@@ -16,9 +17,9 @@ class TestMergeCluster(unittest.TestCase):
         cluster2.add_tupel((28, 'Masters'))
 
         not_anonymized_clusters = {cluster2}
-
+        castle.set_not_anonymized_clusters(not_anonymized_clusters)
         # Aufrufen der zu testenden Funktion
-        result = merge_cluster(cluster1, not_anonymized_clusters, 5)
+        result = castle.merge_cluster(cluster1, not_anonymized_clusters)
 
         expected_cluster = [(18, 'Bachelors'), (24, 'Bachelors'),
                             (23, 'Masters'), (18, 'Bachelors'),
