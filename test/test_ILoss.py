@@ -31,7 +31,7 @@ attribute_properties_test = {
 class TestEnlargementFunction(unittest.TestCase):
 
     def test_enlargement(self):
-        castle = Castle(6, 5, 2)
+        castle = Castle(None, 6, 5, 2)
         # testcase 1
         cluster1 = ([26, 28], ['Masters', 'Bachelors'])
         tupel1 = (24, 'Bachelors')
