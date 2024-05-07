@@ -42,6 +42,10 @@ class Cluster:
     self.t = tuple(cluster)
 
   def adjust_interval(self, value, interval):
+    # wenn beides Intervalle sind
+    if isinstance(value, (list, tuple)) and isinstance(interval, (list, tuple)):
+      return [min(value[0], interval[0]), max(value[1], interval[1])]
+
     # Wenn das Intervall nur eine einzelne Zahl enthält
     if isinstance(interval, int):
       if value < interval:
