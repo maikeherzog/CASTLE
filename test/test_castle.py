@@ -5,6 +5,9 @@ from src.Cluster import Cluster
 
 
 class TestMergeCluster(unittest.TestCase):
+
+    castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+
     def test_merge_cluster(self):
         castle = Castle(None, 6, 5, 2)
         # Erzeugung der Eingabedaten
@@ -26,6 +29,17 @@ class TestMergeCluster(unittest.TestCase):
                             (12, 'Bachelors'), (28, 'Masters')]
         self.assertEqual(result.data, expected_cluster)
         self.assertEqual(result.t, ([12, 28], ['Bachelors', 'Masters']))
+
+    def test_average_loss(self):
+        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
+        castle.anonymized_clusters_InfoLoss= [0.1, 0.2, 0.3]
+        self.assertEqual(castle.average_Loss(), 0.2)
+
+    def test_average_loss_no_anonymized_cluster(self):
+        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
+        self.assertEqual(castle.average_Loss(), 0.0)
+
+
 
 
 # Ausführen der Test-Suite
