@@ -23,6 +23,21 @@ class Cluster:
   def __str__(self):
     return str(self.t) + ', ' + ', '.join(str(t) for t in self.data[1:])
 
+
+  # schaut, ob ein Tupel in das Cluster passt
+  def fits_in_cluster(self, tuple_prime):
+    # Implementierungsabhängig. Die aus der Beschreibung zu entnehmende Anforderung
+    # ist, dass tuple_prime zu allen Tupeln in cluster.data passt.
+    for i in range(len(self.t)):
+      if attribute_properties_test[i]['type'] == 'continuous':
+        if tuple_prime[i] < self.t[i][0] or tuple_prime[i] > self.t[i][1]:
+          return False
+
+      elif attribute_properties_test[i]['type'] == 'cathegorical':
+        if tuple_prime[i] not in self.t[i]:
+          return False
+
+    return True
   def add_tupel(self, t):
     """
     Fügt einen Datensatz zum Cluster hinzu.
