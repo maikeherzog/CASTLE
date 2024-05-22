@@ -29,6 +29,18 @@ class TestCluster(unittest.TestCase):
         expected_output = "Output: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\nOutput: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\nOutput: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\n"
         self.assertEqual(output, expected_output)
 
+    def test_fits_in_cluster(self):
+        c = Cluster((18, 'Bachelors'))
+        c.add_tupel((16, 'Masters'))
+        c.add_tupel((17, 'Primary School'))
+
+        self.assertTrue(c.fits_in_cluster((16, 'Masters')))
+        self.assertTrue(c.fits_in_cluster((17, 'Primary School')))
+        self.assertTrue(c.fits_in_cluster((17, 'Masters')))
+        self.assertFalse(c.fits_in_cluster((12, 'Primary School')))
+        self.assertFalse(c.fits_in_cluster((19, 'Ph.D')))
+        self.assertFalse(c.fits_in_cluster((30, 'Bachelors')))
+
 
 # Führe die TestSuite aus
 if __name__ == '__main__':
