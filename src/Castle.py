@@ -1,17 +1,21 @@
+import random
+
 from src.Cluster import Cluster
 from src.edit_data import attribute_properties_test
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
 class Castle:
-    def __init__(self, k, delta, beta):
+    def __init__(self, stream, k, delta, beta):
         self.not_anonymized_clusters = set()
         self.anonymized_clusters = set()
         self.tao = 0
         self.beta = beta
         self.k = k
-        #self.S = S
+        self.stream = stream
+        self.pos_stream = 0
         self.delta = delta
+        self.anonymized_clusters_InfoLoss = []
 
     def set_anonymized_clusters(self, anonymized_clusters):
         self.anonymized_clusters = anonymized_clusters
@@ -19,10 +23,14 @@ class Castle:
     def set_not_anonymized_clusters(self, not_anonymized_clusters):
         self.not_anonymized_clusters = not_anonymized_clusters
 
+    def set_pos_stream(self, pos_stream):
+        self.pos_stream = pos_stream
+
     def castle_algo(self, S):
         while self.S:
             next_tupel = self.S.pop()  # Get the next tupel from S
-            print("pos:", next_tupel[0])
+            pos_stream = next_tupel[0]
+            print("pos:", pos_stream)
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
                 new_cluster = Cluster(next_tupel)
@@ -34,18 +42,48 @@ class Castle:
                 print("tupel added to cluster")
                 print("best cluster:", best_cluster.t)
 
-            """if next_tupel[0] - delta < 0:
+            if next_tupel[0] - self.delta < 0:
                 tuple_prime = None
             else:
-                tuple_prime = S[next_tupel[0] - delta]
-            if tuple_prime not in anonymized_clusters:
-                delay_constraint(tuple_prime, best_cluster, k)"""
+                tuple_prime = S[next_tupel[0] - self.delta]
+            if tuple_prime not in self.anonymized_clusters:
+                self.delay_constraint(tuple_prime, best_cluster)
 
     def delay_constraint(self, tuple_prime, best_cluster):
         # ich übergebe das bestpasssende cluster, dann muss ich es nicht erst neu berechnen
-        if len(best_cluster) < self.k:
-            return
-        pass
+        if len(best_cluster) >= self.k:
+            self.output_cluster(best_cluster)
+        else:
+            KC_set = {cluster for cluster in self.anonymized_cluster if cluster.fits_in_cluster(tuple_prime)}
+            # prüfen ob KC_set nicht leer ist
+            if KC_set:
+                KC = random.choice(KC_set)
+                self.output_cluster(KC)
+                return
+            m = 0
+            for cluster in self.not_anonymized_clusters:
+                if len(best_cluster)<len(cluster):
+                    m = m+1
+            if m > (len(self.not_anonymized_clusters)/2):
+                # suppress tuple prime
+                self.suppress_tuple(tuple_prime)
+                return
+            if sum(len(cluster) for cluster in self.not_anonymized_clusters) < self.k:
+                # suppress tuple prime
+                self.suppress_tuple(tuple_prime)
+                return
+            # entfernt das beste Cluster aus den nicht anonymisierten Clustern um dann die merge Funktion aufrufen zu können
+            clusters_without_best_cluster = self.not_anonymized_clusters.copy()
+            clusters_without_best_cluster.discard(best_cluster)
+            MC = self.merge_cluster(best_cluster, clusters_without_best_cluster)
+            self.output_cluster(MC)
+
+
+    def suppress_tuple(self, tuple):
+        # TODO: nochmal prüfen
+        self.stream.remove(tuple)
+
+
 
     def output_cluster(self, cluster):
         if len(cluster) >= 2 * self.k:
@@ -54,10 +92,11 @@ class Castle:
             split_cluster = {cluster}
         for cluster in split_cluster:
             cluster.output_tuples()
-            # TODO: was soll ich hier übergeben?
-            # tao = average_Loss()
+            self.tao = self.average_Loss()
             if self.InfoLoss(cluster.t) >= self.tao:
-                self.anonymized_clusters.add(cluster)
+                self.anonymized_clusters.add(cluster, self.pos_stream)
+                Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
+                self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
                 # Muss das noch aus den nicht anonymisierten Clustern entfernt werden? Bzw. Müssen die Tuple entfernt werden?
                 # not_anonymized_clusters.remove(cluster)
             else:
@@ -151,6 +190,14 @@ class Castle:
             sum += self.VInfoLoss_cluster(tupel[att_pos], att_pos)
         return 1 / n * sum
 
+    def InfoLoss_tupel(self, tupel):
+        n = len(tupel)
+        sum = 0
+        for att_pos in range(n):
+            sum += self.VInfoLoss(tupel[att_pos], att_pos)
+        return 1 / n * sum
+
+
     def add_tupel(self, cluster, tupel):
         new_cluster = list(cluster)
         for i in range(len(cluster) - 1):
@@ -228,8 +275,8 @@ class Castle:
         erg = (generalized_range - 1) / (domain_range - 1)
         return erg
 
-    def average_Loss(self, stream, position):
-        sum = 0
-        for tuple in stream and tuple[0] < position:
-            sum += self.InfoLoss(tuple)
-        return 1 / position * sum
+    def average_Loss(self):
+        if len(self.anonymized_clusters_InfoLoss) == 0:
+            return 0
+        else:
+            return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
