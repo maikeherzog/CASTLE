@@ -1,4 +1,7 @@
+import heapq
+import math
 import random
+import sys
 
 from src.Cluster import Cluster
 from src.edit_data import attribute_properties_test
@@ -107,7 +110,77 @@ class Castle:
 
     def split(self, cluster):
         split_cluster = set()
-        # TODO: implementieren
+        BS = self.group_tuples_by_pid(cluster.data)
+        while len(BS) >= self.k:
+            selected_bucket = random.choice(list(BS.keys()))
+            selected_tuple = random.choice(BS[selected_bucket])
+            new_cluster = Cluster(selected_tuple)
+            if not selected_bucket:
+                del(selected_bucket)
+            # H is heap with k-1 nodes
+            H = self.initialize_heap(selected_tuple)
+            for bucket in [b for b in BS if b != selected_bucket]:         # Führe Aktionen auf jedem "bucket" aus, der nicht "selected_bucket" ist.
+                # Zufälligen Tupel aus Bucket auswählen
+                tuple_from_bucket = random.choice(BS[bucket])
+
+                # Distanz berechnen
+                t_dist = self.calculate_tuple_distance(tuple_from_bucket, selected_tuple)
+
+                # Distanz von t ist kleiner als die Distanz des Wurzelelements von H
+                if t_dist < H[0][1]:
+                    # Ersetze Wurzelelement mit t
+                    heapq.heapreplace(H, (tuple_from_bucket, t_dist))
+            for node in H:
+                tuple_in_node = node[0]
+                new_cluster.add_tupel(tuple_in_node)
+                for bucket in BS:
+                    if tuple_in_node in BS[bucket]:
+                        BS[bucket].remove(tuple_in_node)
+                        # Wenn Bucket leer ist, entfernen
+                        if not BS[bucket]:
+                            del BS[bucket]
+                        break
+            split_cluster.add(new_cluster)
+        for bucket in BS.keys():
+            ti = random.choice(BS[bucket])
+            nearest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, t))
+            nearest_cluster.update(BS[bucket])
+            del BS[bucket]
+        return split_cluster
+
+    import heapq
+    import sys
+
+    def initialize_heap(self, tuple):
+        H = []
+
+        # Füge k-1 Knoten hinzu, jedes mit unendlicher Distanz zu selected_tuple
+        for _ in range(self.k - 1):
+            # Annahme: Der Knoten ist hier nur repräsentiert als Index (z.B. die Knoten könnten anschließend als 'Knoten 1', 'Knoten 2', etc. behandelt werden)
+            # Du könntest stattdessen eigene Knotenobjekte o.ä. hinzufügen
+            node = len(H)
+
+            # Mit 'sys.maxsize' setzen wir die Distanz initial auf 'unendlich'
+            distance = float('inf')
+
+            # Die heapq-Bibliothek erlaubt es nur Min-Heap zu bauen,
+            # deswegen nehmen wir -1*distance, um einen Max-Heap zu simulieren, da es nach der Beschreibung aussieht, dass du einen Max-Heap willst
+            H.append((node, -1 * distance))
+
+        # Heapfify ist eine Funktion, die eine Liste in-place in einen Heap umwandelt.
+        heapq.heapify(H)
+
+        return H
+
+    def group_tuples_by_pid(self, cluster_data):
+        grouped_data = dict()
+        for tupel in cluster_data:
+            pid = tupel.pid
+            if pid in grouped_data:
+                grouped_data[pid].append(tupel)
+            else:
+                grouped_data[pid] = [tupel]
+        return grouped_data
 
     def merge_cluster(self, cluster, set_of_clusters):
         # set_of clusters besteht aus non_anonymized_clusters
@@ -280,3 +353,9 @@ class Castle:
             return 0
         else:
             return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
+
+    def calculate_tuple_distance(self, tuple1, tuple2) -> float:
+        num_diff = abs(tuple1[0] - tuple2[0])
+        str_diff = 0 if tuple1[1] == tuple2[1] else 1
+        return math.sqrt(num_diff ** 2 + str_diff ** 2)
+
