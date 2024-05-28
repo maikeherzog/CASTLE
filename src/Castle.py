@@ -148,9 +148,6 @@ class Castle:
             del BS[bucket]
         return split_cluster
 
-    import heapq
-    import sys
-
     def initialize_heap(self, tuple):
         H = []
 
