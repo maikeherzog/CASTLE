@@ -153,3 +153,8 @@ class Cluster:
 
     return (given - current) / len(self.ranges)
 """
+
+  def update(self, tuples):
+    for tuple in tuples:
+      self.add_tupel(tuple)
+
