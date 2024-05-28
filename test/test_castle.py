@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from src.Castle import Castle
@@ -40,7 +41,27 @@ class TestMergeCluster(unittest.TestCase):
         self.assertEqual(castle.average_Loss(), 0.0)
 
 
+class TestSplitMethods(unittest.TestCase):
 
+    def test_initialize_heap(self):
+        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 5, 5, 2)
+
+        H = castle.initialize_heap(
+            "Dummy Tuple")  # es spielt keine Rolle, was wir hier passieren, da die Distanzen unabhängig von diesem Wert auf Unendlichkeit gesetzt werden
+
+        # Es sollte k - 1 = 4 Knoten im Heap geben
+        self.assertEqual(len(H), 4)
+
+        # Jeder Knoten sollte eine "unendliche" Distanz haben, die sich durch float('inf') darstellen lässt
+        for (index,distanze) in H:
+            self.assertEqual((index, distanze),(index, -1 * float('inf')))
+
+class TestEnlargement(unittest.TestCase):
+    def test_Enlargement_Tuple_Tuple(self):
+
+        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 5, 5, 2)
+        castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors'))
+        self.assertEqual(castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors')), 0.13480392156862744)
 
 # Ausführen der Test-Suite
 if __name__ == "__main__":
