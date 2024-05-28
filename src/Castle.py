@@ -143,7 +143,7 @@ class Castle:
             split_cluster.add(new_cluster)
         for bucket in BS.keys():
             ti = random.choice(BS[bucket])
-            nearest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, t))
+            nearest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, ti))
             nearest_cluster.update(BS[bucket])
             del BS[bucket]
         return split_cluster
