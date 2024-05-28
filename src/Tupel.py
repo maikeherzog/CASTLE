@@ -3,7 +3,7 @@ class Tuple:
   Ein Datensatz.
 
   Args:
-    
+
 
   """
 
