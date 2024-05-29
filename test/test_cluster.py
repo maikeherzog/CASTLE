@@ -3,7 +3,19 @@ import unittest
 from io import StringIO
 from contextlib import redirect_stdout
 
+from src.Tupel import Tuple
+
+
 class TestCluster(unittest.TestCase):
+
+    def test_add_tupel(self):
+        t = Tuple(0, 0, (52, 'Secondary School'),())
+        c = Cluster(t)
+        tuple1 = Tuple(1, 1, (51, 'Bachelors'), ())
+        c.add_tupel(tuple1)
+
+        self.assertEqual(c.data, [t, tuple1])
+        self.assertEqual(c.t, ([51, 52], ['Secondary School', 'Bachelors']))
 
     def test_output_tuples_intervall(self):
         c = Cluster((18, 'Bachelors'))
