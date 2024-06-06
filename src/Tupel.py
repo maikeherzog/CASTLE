@@ -13,3 +13,8 @@ class Tuple:
     self.qi = qi
     self.sensitive_attributes = sensitive_attributes
 
+  def len_qi(self):
+    return len(self.qi)
+
+  def set_qi(self, qi):
+    self.qi = qi

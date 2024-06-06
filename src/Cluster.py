@@ -1,3 +1,6 @@
+import copy
+
+from src.Tupel import Tuple
 from src.edit_data import attribute_properties_test
 
 
@@ -10,7 +13,7 @@ class Cluster:
   """
 
   def __init__(self, t):
-    self.t = t
+    self.t = t.qi
     self.data = [t]
 
   def __len__(self):
@@ -24,10 +27,15 @@ class Cluster:
     return str(self.t) + ', ' + ', '.join(str(t) for t in self.data[1:])
 
 
+  def make_tuple_from_qi(self, qi):
+    new_tuple = Tuple(0, 0, qi, ())
+    return new_tuple
+
   # schaut, ob ein Tupel in das Cluster passt
   def fits_in_cluster(self, tuple_prime):
     # Implementierungsabhängig. Die aus der Beschreibung zu entnehmende Anforderung
     # ist, dass tuple_prime zu allen Tupeln in cluster.data passt.
+    #print("Tuple:", tuple_prime, "Cluster:", self.t)
     for i in range(len(self.t)):
       if attribute_properties_test[i]['type'] == 'continuous':
         if tuple_prime[i] < self.t[i][0] or tuple_prime[i] > self.t[i][1]:
@@ -48,21 +56,31 @@ class Cluster:
 
     self.data.append(t)
     cluster = list(self.t)
-    for i in range(len(self.t)):
+    for i in range(len(cluster)):
         if attribute_properties_test[i]['type'] == 'continuous':
-            cluster[i] = self.adjust_interval(t[i], cluster[i])
+          #print("Tuple:", t.qi[i], "Cluster:", cluster[i])
+          cluster[i] = self.adjust_interval(t.qi[i], cluster[i])
 
         elif attribute_properties_test[i]['type'] == 'cathegorical':
-            cluster[i] = self.add_unique_string_to_list(t[i], cluster[i])
+            cluster[i] = self.add_unique_string_to_list(t.qi[i], cluster[i])
     self.t = tuple(cluster)
 
   def adjust_interval(self, value, interval):
+    # Wenn value ein Intervall ist und Intervall nur eine Zahl (kann bei merge Cluster vorkommen
+    if isinstance(value, (list, tuple)) and isinstance(interval, int):
+      if value[0] > interval:
+        return [interval, value[1]]
+      elif value[1] < interval:
+        return [value[0], interval]
+      else:
+        return value
+
     # wenn beides Intervalle sind
     if isinstance(value, (list, tuple)) and isinstance(interval, (list, tuple)):
       return [min(value[0], interval[0]), max(value[1], interval[1])]
 
     # Wenn das Intervall nur eine einzelne Zahl enthält
-    if isinstance(interval, int):
+    if isinstance(interval, int) and isinstance(value, int):
       if value < interval:
         return [value, interval]
       else:
@@ -72,7 +90,7 @@ class Cluster:
     else:
       lower_bound, upper_bound = interval
 
-      if value < lower_bound:
+      if value <= lower_bound:
         lower_bound = value
       elif value > upper_bound:
         upper_bound = value
@@ -84,10 +102,27 @@ class Cluster:
     if isinstance(value_list, str):
       value_list = [value_list]
 
-    if value not in value_list:
+    # Wenn der Wert eine Liste ist, fügen wir jedes eindeutige Element hinzu
+    if isinstance(value, list):
+      for item in value:
+        if item not in value_list:
+          value_list.append(item)
+
+    # Wenn der Wert ein String ist und nicht in der Liste ist, fügen wir ihn hinzu
+    elif value not in value_list:
       value_list.append(value)
+
     return value_list
 
+  def check_cluster_if_equal(self, cluster):
+    if len(self.t) != len(cluster.t):
+      return False
+
+    for i in range(len(self.t)):
+      if self.t[i] != cluster.t[i]:
+        return False
+
+    return True
 
   def is_k_anonymous(self, k, δ, β):
     """
@@ -121,21 +156,13 @@ class Cluster:
 
     return True
 
-  def output_tuples(self):
-    for tupel in self.data:
-      # Erstelle ein neues Tupel, beginnend mit den generalisierten Werten
-      generalized_tupel = [x for x in self.t[:len(tupel)]]
-
-      # Wenn das Originaltupel länger ist als t, füge die zusätzlichen Werte hinzu
-      if len(tupel) > len(self.t):
-        for extra in tupel[len(self.t):]:
-          generalized_tupel.append(extra)
-
-      # Umwandlung in Tupel und Ausgaben
-      print("Output:", tuple(generalized_tupel))
-      """for tupel in self.data:
-          generalized_tupel = (self.t[0], [edu for edu in self.t[1] if edu == tupel[1]])
-          print("Output:", generalized_tupel)"""
+  def output_tuples(self) -> list:
+      generalized_tupels = []
+      for tupel in self.data:
+        copied_tuple = copy.copy(tupel)
+        copied_tuple.set_qi(self.t)
+        generalized_tupels.append(copied_tuple)
+      return generalized_tupels
 
   """
   def tuple_enlargement(self, tupel, global_ranges: Dict[str, Range]) -> float:
@@ -152,7 +179,7 @@ class Cluster:
     current = self.information_loss(global_ranges)
 
     return (given - current) / len(self.ranges)
-"""
+  """
 
   def update(self, tuples):
     for tuple in tuples:

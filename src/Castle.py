@@ -1,3 +1,4 @@
+import copy
 import heapq
 import math
 import random
@@ -19,6 +20,7 @@ class Castle:
         self.pos_stream = 0
         self.delta = delta
         self.anonymized_clusters_InfoLoss = []
+        self.output = []
 
     def set_anonymized_clusters(self, anonymized_clusters):
         self.anonymized_clusters = anonymized_clusters
@@ -30,38 +32,60 @@ class Castle:
         self.pos_stream = pos_stream
 
     def castle_algo(self, S):
-        while self.S:
-            next_tupel = self.S.pop()  # Get the next tupel from S
-            pos_stream = next_tupel[0]
-            print("pos:", pos_stream)
+        while self.stream and self.pos_stream < len(self.stream):
+            next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
+            #print("____________________________________________________________________________________________________")
+            #print("Position Stream:", self.pos_stream)
+            #print("Tuple", next_tupel.qi)
+            #print("-------not_anomized_clusters befor best_selection-------")
+            """for cluster in self.not_anonymized_clusters:
+                print(cluster.t, cluster.data)
+                for tupel in cluster.data:
+                    print("Data:", tupel.qi)"""
+            #print("--------------")
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
+                #print(f"best_cluster for {next_tupel.qi} is None")
                 new_cluster = Cluster(next_tupel)
                 self.not_anonymized_clusters.add(new_cluster)
                 best_cluster = new_cluster
-                print("new cluster added to not_anonymized_clusters")
+                #print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
             else:
+                #print("-------not_anomized_clusters-------")
+                """for cluster in self.not_anonymized_clusters:
+                    print(cluster.t, cluster.data)#
+                    for tupel in cluster.data:
+                        print("Data:", tupel.qi)"""
+                #print("--------------")
                 best_cluster.add_tupel(next_tupel)
-                print("tupel added to cluster")
-                print("best cluster:", best_cluster.t)
+                #print(f"tupel {next_tupel.qi} added to cluster {best_cluster.t}")
 
-            if next_tupel[0] - self.delta < 0:
+            if self.pos_stream - self.delta < 0:
+                #print("pos_stream - delta < 0")
                 tuple_prime = None
             else:
-                tuple_prime = S[next_tupel[0] - self.delta]
-            if tuple_prime not in self.anonymized_clusters:
+                #print("Tuple_prime:", S[self.pos_stream - self.delta].qi)
+                tuple_prime = S[self.pos_stream - self.delta]
+
+            #print("Anonymized Cluster_____:", cluster.t)
+            if tuple_prime not in self.output and tuple_prime is not None: #TODO: hier prüfen, ob es schon ausgegeben wurde
+                #best_cluster = self.best_selection(tuple_prime)
                 self.delay_constraint(tuple_prime, best_cluster)
 
+            self.pos_stream += 1
+
     def delay_constraint(self, tuple_prime, best_cluster):
+        #print("delay_constraint")
         # ich übergebe das bestpasssende cluster, dann muss ich es nicht erst neu berechnen
         if len(best_cluster) >= self.k:
+            #print("best_cluster, wenn len > k:", best_cluster.t)
             self.output_cluster(best_cluster)
         else:
-            KC_set = {cluster for cluster in self.anonymized_cluster if cluster.fits_in_cluster(tuple_prime)}
+            KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
             # prüfen ob KC_set nicht leer ist
             if KC_set:
-                KC = random.choice(KC_set)
-                self.output_cluster(KC)
+                KC = random.choice(list(KC_set))
+                self.output_anonymized_cluster(KC)
                 return
             m = 0
             for cluster in self.not_anonymized_clusters:
@@ -76,8 +100,12 @@ class Castle:
                 self.suppress_tuple(tuple_prime)
                 return
             # entfernt das beste Cluster aus den nicht anonymisierten Clustern um dann die merge Funktion aufrufen zu können
-            clusters_without_best_cluster = self.not_anonymized_clusters.copy()
-            clusters_without_best_cluster.discard(best_cluster)
+            clusters_without_best_cluster = copy.deepcopy(self.not_anonymized_clusters)
+
+            for i in clusters_without_best_cluster:
+                if i.check_cluster_if_equal(best_cluster):
+                    clusters_without_best_cluster.remove(i)
+                    break
             MC = self.merge_cluster(best_cluster, clusters_without_best_cluster)
             self.output_cluster(MC)
 
@@ -86,29 +114,48 @@ class Castle:
         # TODO: nochmal prüfen
         self.stream.remove(tuple)
 
-
+    def output_anonymized_cluster(self, cluster):
+        output_tuples = cluster.output_tuples()
+        self.output.extend(output_tuples)
+        for tuple in output_tuples:
+            print("Output_:", tuple.qi)
 
     def output_cluster(self, cluster):
+        #print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k:
-            split_cluster = self.split(cluster)
+            for i in self.not_anonymized_clusters:
+                split_cluster = self.split(cluster)
+            self.not_anonymized_clusters.remove(cluster)
+            for elem in split_cluster:
+                self.not_anonymized_clusters.add(elem)
         else:
             split_cluster = {cluster}
         for cluster in split_cluster:
-            cluster.output_tuples()
+            output_tuples = cluster.output_tuples()
+            self.output.extend(output_tuples)
+            for tuple in output_tuples:
+                print("_Output:", tuple.qi)
             self.tao = self.average_Loss()
             if self.InfoLoss(cluster.t) >= self.tao:
-                self.anonymized_clusters.add(cluster, self.pos_stream)
+                # TODO: ich hatte hier erst auch die self.pos_stream mit hinzufügen wollen warum?
+                # self.anonymized_clusters.add(cluster, self.pos_stream)
+                self.anonymized_clusters.add(cluster)
                 Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
                 self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
                 # Muss das noch aus den nicht anonymisierten Clustern entfernt werden? Bzw. Müssen die Tuple entfernt werden?
-                # not_anonymized_clusters.remove(cluster)
+                #self.not_anonymized_clusters.remove(cluster)
             else:
                 # TODO: stimmt das hier so, dass das da entfern werden soll?
-                del cluster
+                #split_cluster.remove(cluster)
+                continue
                 # not_anonymized_clusters.remove(cluster)
-            self.not_anonymized_clusters.remove(cluster)
+                #pass
+        #print("Cluster", cluster.t)
+        self.not_anonymized_clusters.remove(cluster)
+        #print("removed")
 
     def split(self, cluster):
+        #print("Split Function")
         split_cluster = set()
         BS = self.group_tuples_by_pid(cluster.data)
         while len(BS) >= self.k:
@@ -119,6 +166,8 @@ class Castle:
                 del(selected_bucket)
             # H is heap with k-1 nodes
             H = self.initialize_heap(selected_tuple)
+            #H = [(float('inf'), i) for i in range(self.k - 1)]
+            #heapq.heapify(H)
             for bucket in [b for b in BS if b != selected_bucket]:         # Führe Aktionen auf jedem "bucket" aus, der nicht "selected_bucket" ist.
                 # Zufälligen Tupel aus Bucket auswählen
                 tuple_from_bucket = random.choice(BS[bucket])
@@ -127,11 +176,19 @@ class Castle:
                 t_dist = self.calculate_tuple_distance(tuple_from_bucket, selected_tuple)
 
                 # Distanz von t ist kleiner als die Distanz des Wurzelelements von H
-                if t_dist < H[0][1]:
+
+                if t_dist < H[0][0]:
                     # Ersetze Wurzelelement mit t
-                    heapq.heapreplace(H, (tuple_from_bucket, t_dist))
+                    heapq.heapreplace(H, (t_dist, tuple_from_bucket))
+                elif len(H) == self.k - 1 and t_dist >= H[0][0]:
+                    #print("t_dist:", t_dist)
+                    #print("tuple_from_bucket:", tuple_from_bucket.qi)
+                    #print("H:", H)
+                    heapq.heappushpop(H, (t_dist, tuple_from_bucket))
+                else:
+                    heapq.heappush(H, (t_dist, tuple_from_bucket))
             for node in H:
-                tuple_in_node = node[0]
+                tuple_in_node = node[1]
                 new_cluster.add_tupel(tuple_in_node)
                 for bucket in BS:
                     if tuple_in_node in BS[bucket]:
@@ -141,11 +198,14 @@ class Castle:
                             del BS[bucket]
                         break
             split_cluster.add(new_cluster)
+        keys_to_remove = []
         for bucket in BS.keys():
             ti = random.choice(BS[bucket])
             nearest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, ti))
             nearest_cluster.update(BS[bucket])
-            del BS[bucket]
+            keys_to_remove.append(bucket)
+        for key in keys_to_remove:
+            del BS[key]
         return split_cluster
 
     def initialize_heap(self, tuple):
@@ -162,7 +222,7 @@ class Castle:
 
             # Die heapq-Bibliothek erlaubt es nur Min-Heap zu bauen,
             # deswegen nehmen wir -1*distance, um einen Max-Heap zu simulieren, da es nach der Beschreibung aussieht, dass du einen Max-Heap willst
-            H.append((node, -1 * distance))
+            H.append((distance * (-1), node))
 
         # Heapfify ist eine Funktion, die eine Liste in-place in einen Heap umwandelt.
         heapq.heapify(H)
@@ -180,6 +240,7 @@ class Castle:
         return grouped_data
 
     def merge_cluster(self, cluster, set_of_clusters):
+        #print("merge Cluster Funktion")
         # set_of clusters besteht aus non_anonymized_clusters
         leng = len(cluster)
         while len(cluster) < self.k:
@@ -190,7 +251,7 @@ class Castle:
                 merged_size = len(cluster) + len(c)
 
                 # berechnung des Enlargement
-                enlargement = self.Enlargement(cluster.t, c.t)
+                enlargement = self.Enlargement(cluster, c.make_tuple_from_qi(c.t))
 
                 if enlargement < min_enlargement:
                     min_enlargement = enlargement
@@ -202,33 +263,36 @@ class Castle:
             # not_anonymized_clusters.remove(min_enlargement_cluster)
         return cluster
 
-    def best_selection(self, tuple):
+    def best_selection(self, tuple)-> Cluster:
+        #print("best selection Funktion")
         enlargements = set()
         if not self.not_anonymized_clusters:
             return None
         # Möglichkeit mit List-Comprehension darstellen:
         # enlargements = set([Enlargement(cluster, tuple) for cluster in not_anonymized_clusters])
         for cluster in self.not_anonymized_clusters:
-            enlargement = self.Enlargement(cluster.t, tuple)
+            enlargement = self.Enlargement(cluster, tuple)
             enlargements.add(enlargement)
         min_enlargement = min(enlargements)
 
         # Set of clusters C' in not_anonymized_clusters with Enlargement(C', tupel) = min
-        set_cluster_min = [C for C in self.not_anonymized_clusters if self.Enlargement(C.t, tuple) == min_enlargement]
+        set_cluster_min = [C for C in self.not_anonymized_clusters if self.Enlargement(C, tuple) == min_enlargement]
         set_c_ok = set()
         for cluster in set_cluster_min:
-            IL_cluster = self.InfoLoss(cluster.t)
-            if IL_cluster >= self.tao:
+            #IL_cluster = self.InfoLoss(cluster.t)
+            #TODO: stimmt das hier mit dem Enlargement?
+            IL_cluster = self.Enlargement(cluster, tuple)
+            if IL_cluster <= self.tao:
                 set_c_ok.add(cluster)
         if not set_c_ok:
             if len(self.not_anonymized_clusters) >= self.beta:
-                return min(set_cluster_min, key=lambda cluster: len(cluster.data))
+                return min(set_cluster_min, key=lambda cluster: len(cluster))
             else:
                 return None
         else:
-            return min(set_c_ok, key=lambda cluster: len(cluster.data))
+            return min(set_c_ok, key=lambda cluster: len(cluster))
 
-    def Enlargement(self, cluster, tupel):
+    def Enlargement(self, cluster, tupel) -> float:
         """
           This function calculates the enlargement of a cluster C with respect to a tuple t.
 
@@ -239,16 +303,17 @@ class Castle:
           Returns:
               A number representing the enlargement of a cluster with respect to t.
           """
-        n = len(cluster)  # Assuming all tuples in C have the same length
-        enlarged_cluster = self.add_tupel(cluster, tupel)
+        n = len(cluster.t)  # Assuming all tuples in C have the same length
+        enlarged_cluster = copy.deepcopy(cluster)
+        enlarged_cluster.add_tupel(tupel)
         sum_iloss_cluster = 0
         sum_iloss_enlarged_cluster = 0
 
         # Calculate VInfoLoss for each attribute
         for i in range(n):
-            info_loss_cluster = self.VInfoLoss_cluster(cluster[i], i)
+            info_loss_cluster = self.VInfoLoss_cluster(cluster.t[i], i)
             sum_iloss_cluster += info_loss_cluster
-            info_loss_together = self.VInfoLoss(enlarged_cluster[i], i)
+            info_loss_together = self.VInfoLoss(enlarged_cluster.t[i], i)
             sum_iloss_enlarged_cluster += info_loss_together
 
         return 1 / n * sum_iloss_enlarged_cluster - 1 / n * sum_iloss_cluster
@@ -280,12 +345,22 @@ class Castle:
         return tuple(new_cluster)
 
     def adjust_interval(self, value, interval):
+
+        # Wenn value ein Intervall ist und Intervall nur eine Zahl (kann bei merge Cluster vorkommen
+        if isinstance(value, (list, tuple)) and isinstance(interval, int):
+            if value[0] > interval:
+                return [interval, value[1]]
+            elif value[1] < interval:
+                return [value[0], interval]
+            else:
+                return value
+
         # wenn beides Intervalle sind
         if isinstance(value, (list, tuple)) and isinstance(interval, (list, tuple)):
             return [min(value[0], interval[0]), max(value[1], interval[1])]
 
         # Wenn das Intervall nur eine einzelne Zahl enthält
-        if isinstance(interval, int):
+        if isinstance(interval, int) and isinstance(value, int):
             if value < interval:
                 return [value, interval]
             else:
@@ -327,9 +402,13 @@ class Castle:
         return info_loss
 
     def VInfoLoss_continuos(self, attribut_range, domain_range):
+        if isinstance(attribut_range, int):
+            #return attribut_range / (domain_range[1] - domain_range[0])
+            return 0
         if len(attribut_range) == 1:
             # TODO: hier nochmal schauen ob das stimmt
-            return (attribut_range[0]) / (domain_range[1] - domain_range[0])
+            #return (attribut_range[0]) / (domain_range[1] - domain_range[0])
+            return 0
         return (attribut_range[1] - attribut_range[0]) / (domain_range[1] - domain_range[0])
 
     def VInfoLoss_cathegorical(self, attribut_range, domain_tree):
@@ -341,8 +420,11 @@ class Castle:
 
     def VInfoLoss_cathegorical_cluster(self, attribut_range, domain_tree):
         domain_range = count_all_leaves(domain_tree)
-        generalized_range = len(attribut_range)
-        erg = (generalized_range - 1) / (domain_range - 1)
+        if isinstance(attribut_range, str):
+            erg = 0
+        else:
+            generalized_range = len(attribut_range)
+            erg = (generalized_range - 1) / (domain_range - 1)
         return erg
 
     def average_Loss(self):
@@ -352,7 +434,10 @@ class Castle:
             return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
-        num_diff = abs(tuple1[0] - tuple2[0])
-        str_diff = 0 if tuple1[1] == tuple2[1] else 1
-        return math.sqrt(num_diff ** 2 + str_diff ** 2)
+        #TODO: Das auf größere Tupel anpassen
+        #print("Tuple1:", tuple1.qi)
+        #print("Tuple2:", tuple2.qi)
+        num_diff = abs(tuple1.qi[0] - tuple2.qi[0])
+        str_diff = 0 if tuple1.qi[1] == tuple2.qi[1] else 1
+        return math.sqrt(num_diff ** 2 + str_diff ** 2)*(-1)
 
