@@ -32,4 +32,9 @@ def test_generalization_non_unique_match():
     generalization = find_generalization(relationship_tree, attributes)
     assert generalization == "Any Relationship"
 
+def test_generalization_with_ancor():
+    attributes = ['Any Relationship', 'Family-member', 'Own-child']
+    generalization = find_generalization(relationship_tree, attributes)
+    assert generalization == "Any Relationship"
+
 

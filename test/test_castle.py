@@ -3,50 +3,60 @@ import unittest
 
 from src.Castle import Castle
 from src.Cluster import Cluster
+from src.Tupel import Tuple
 
 
 class TestMergeCluster(unittest.TestCase):
 
-    castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+    def setUp(self):
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+
 
     def test_merge_cluster(self):
-        castle = Castle(None, 6, 5, 2)
+        #castle = Castle(None, 6, 5, 2)
         # Erzeugung der Eingabedaten
-        cluster1 = Cluster((18, 'Bachelors'))
-        cluster1.add_tupel((24, 'Bachelors'))
-        cluster1.add_tupel((23, 'Masters'))
+        tuple0 = Tuple(0, 0, (18, 'Bachelors'), ())
+        cluster1 = Cluster(tuple0)
+        tuple1 = Tuple(1,1,(24, 'Bachelors'),())
+        tuple2 = Tuple(2,2,(23, 'Masters'),())
+        cluster1.add_tupel(tuple1)
+        cluster1.add_tupel(tuple2)
 
-        cluster2 = Cluster((18, 'Bachelors'))
-        cluster2.add_tupel((12, 'Bachelors'))
-        cluster2.add_tupel((28, 'Masters'))
+        cluster2 = Cluster(tuple0)
+        tuple3 = Tuple(1,1,(12, 'Bachelors'),())
+        tuple4 = Tuple(2,2,(28, 'Masters'),())
+        cluster2.add_tupel(tuple3)
+        cluster2.add_tupel(tuple4)
 
         not_anonymized_clusters = {cluster2}
-        castle.set_not_anonymized_clusters(not_anonymized_clusters)
+        self.castle.set_not_anonymized_clusters(not_anonymized_clusters)
         # Aufrufen der zu testenden Funktion
-        result = castle.merge_cluster(cluster1, not_anonymized_clusters)
+        result = self.castle.merge_cluster(cluster1, not_anonymized_clusters)
 
-        expected_cluster = [(18, 'Bachelors'), (24, 'Bachelors'),
-                            (23, 'Masters'), (18, 'Bachelors'),
-                            (12, 'Bachelors'), (28, 'Masters')]
-        self.assertEqual(result.data, expected_cluster)
+        expected_cluster_data = [tuple0, tuple1, tuple2, tuple0, tuple3, tuple4]
+
+        self.assertEqual(result.data, expected_cluster_data)
         self.assertEqual(result.t, ([12, 28], ['Bachelors', 'Masters']))
 
     def test_average_loss(self):
-        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
-        castle.anonymized_clusters_InfoLoss= [0.1, 0.2, 0.3]
-        self.assertEqual(castle.average_Loss(), 0.2)
+        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
+        self.castle.anonymized_clusters_InfoLoss= [0.1, 0.2, 0.3]
+        self.assertEqual(self.castle.average_Loss(), 0.2)
 
     def test_average_loss_no_anonymized_cluster(self):
-        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
-        self.assertEqual(castle.average_Loss(), 0.0)
+        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
+        self.assertEqual(self.castle.average_Loss(), 0.0)
 
 
 class TestSplitMethods(unittest.TestCase):
+    def setUp(self):
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+
 
     def test_initialize_heap(self):
-        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 5, 5, 2)
+        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 5, 5, 2)
 
-        H = castle.initialize_heap(
+        H = self.castle.initialize_heap(
             "Dummy Tuple")  # es spielt keine Rolle, was wir hier passieren, da die Distanzen unabhängig von diesem Wert auf Unendlichkeit gesetzt werden
 
         # Es sollte k - 1 = 4 Knoten im Heap geben
@@ -57,11 +67,26 @@ class TestSplitMethods(unittest.TestCase):
             self.assertEqual((index, distanze),(index, -1 * float('inf')))
 
 class TestEnlargement(unittest.TestCase):
+    def setUp(self):
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+
     def test_Enlargement_Tuple_Tuple(self):
 
-        castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 5, 5, 2)
-        castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors'))
-        self.assertEqual(castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors')), 0.13480392156862744)
+        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 5, 5, 2)
+        self.castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors'))
+        self.assertEqual(self.castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors')), 0.13480392156862744)
+
+    def test_enlargement(self):
+        # testcase 1
+        #cluster1 = ([26, 28], ['Masters', 'Bachelors'])
+        cluster1 = Cluster(Tuple(0,0,(26, 'Masters'),()))
+        cluster1.add_tupel(Tuple(1,1,(28, 'Bachelors'),()))
+        #tupel1 = (24, 'Bachelors')
+        tuple1 = Tuple(2,2,(24, 'Bachelors'), ())
+        expected_result1 = 0.13480392156862744
+        result1 = self.castle.Enlargement(cluster1, tuple1)
+        self.assertAlmostEqual(result1, expected_result1, places=3)
+
 
 # Ausführen der Test-Suite
 if __name__ == "__main__":
