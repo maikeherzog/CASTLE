@@ -1,7 +1,7 @@
 import copy
 
 from src.Tupel import Tuple
-from src.edit_data import attribute_properties_test
+from src.edit_data import attribute_properties_test, attribute_properties
 
 
 class Cluster:
@@ -37,11 +37,11 @@ class Cluster:
     # ist, dass tuple_prime zu allen Tupeln in cluster.data passt.
     #print("Tuple:", tuple_prime, "Cluster:", self.t)
     for i in range(len(self.t)):
-      if attribute_properties_test[i]['type'] == 'continuous':
+      if attribute_properties[i]['type'] == 'continuous':
         if tuple_prime[i] < self.t[i][0] or tuple_prime[i] > self.t[i][1]:
           return False
 
-      elif attribute_properties_test[i]['type'] == 'cathegorical':
+      elif attribute_properties[i]['type'] == 'cathegorical':
         if tuple_prime[i] not in self.t[i]:
           return False
 
@@ -57,11 +57,11 @@ class Cluster:
     self.data.append(t)
     cluster = list(self.t)
     for i in range(len(cluster)):
-        if attribute_properties_test[i]['type'] == 'continuous':
+        if attribute_properties[i]['type'] == 'continuous':
           #print("Tuple:", t.qi[i], "Cluster:", cluster[i])
           cluster[i] = self.adjust_interval(t.qi[i], cluster[i])
 
-        elif attribute_properties_test[i]['type'] == 'cathegorical':
+        elif attribute_properties[i]['type'] == 'cathegorical':
             cluster[i] = self.add_unique_string_to_list(t.qi[i], cluster[i])
     self.t = tuple(cluster)
 

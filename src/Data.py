@@ -26,8 +26,10 @@ class Data:
         for item in stream:
             pid = item[0]
             time = item[1]
-            qi = tuple(item[i] for i in qi_index)
-            sa = tuple(item[i] for i in sa_index)
+            qi = tuple(item[i] for i in range(qi_index[0], qi_index[1]))
+            sa = []
+            if sa_index != []:
+                sa = tuple(item[i] for i in range(sa_index[0], sa_index[1]))
 
             my_tuple = Tuple(pid, time, qi, sa)
             list_of_tuples.append(my_tuple)

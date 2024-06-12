@@ -5,7 +5,7 @@ import random
 import sys
 
 from src.Cluster import Cluster
-from src.edit_data import attribute_properties_test
+from src.edit_data import attribute_properties_test, attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
@@ -352,10 +352,10 @@ class Castle:
     def add_tupel(self, cluster, tupel):
         new_cluster = list(cluster)
         for i in range(len(cluster) - 1):
-            if attribute_properties_test[i]['type'] == 'continuous':
+            if attribute_properties[i]['type'] == 'continuous':
                 new_cluster[i] = self.adjust_interval(tupel[i], cluster[i])
 
-            elif attribute_properties_test[i]['type'] == 'cathegorical':
+            elif attribute_properties[i]['type'] == 'cathegorical':
                 new_cluster[i] = self.add_unique_string_to_list(tupel[i], cluster[i])
 
         return tuple(new_cluster)
@@ -403,18 +403,18 @@ class Castle:
 
     def VInfoLoss(self, attribut, pos) -> int:
         info_loss = 0
-        if attribute_properties_test[pos]['type'] == 'continuous':
-            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties_test[pos]['interval'])
-        elif attribute_properties_test[pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties_test[pos]['hierarchy_tree'])
+        if attribute_properties[pos]['type'] == 'continuous':
+            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[pos]['interval'])
+        elif attribute_properties[pos]['type'] == 'cathegorical':
+            info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties[pos]['hierarchy_tree'])
         return info_loss
 
     def VInfoLoss_cluster(self, attribut, pos) -> int:
         info_loss = 0
-        if attribute_properties_test[pos]['type'] == 'continuous':
-            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties_test[pos]['interval'])
-        elif attribute_properties_test[pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical_cluster(attribut, attribute_properties_test[pos]['hierarchy_tree'])
+        if attribute_properties[pos]['type'] == 'continuous':
+            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[pos]['interval'])
+        elif attribute_properties[pos]['type'] == 'cathegorical':
+            info_loss = self.VInfoLoss_cathegorical_cluster(attribut, attribute_properties[pos]['hierarchy_tree'])
         return info_loss
 
     def VInfoLoss_continuos(self, attribut_range, domain_range):
