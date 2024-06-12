@@ -185,3 +185,8 @@ class Cluster:
     for tuple in tuples:
       self.add_tupel(tuple)
 
+  def check_if_tuple_is_in_cluster(self, tuple):
+    for t in self.data:
+      if t == tuple:
+        return True
+    return False

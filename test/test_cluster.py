@@ -109,6 +109,16 @@ class TestCluster(unittest.TestCase):
         c2 = Cluster(tuple2)
         self.assertTrue(self.c.check_cluster_if_equal(c2))
 
+    def test_check_if_tuple_is_in_cluster(self):
+        tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
+        c1 = Cluster(tuple1)
+        self.assertTrue(c1.check_if_tuple_is_in_cluster(tuple1))
+
+        tuple2 = Tuple(1, 1, (52, 'Secondary School'), ())
+        c2 = Cluster(tuple1)
+        self.assertFalse(c2.check_if_tuple_is_in_cluster(tuple2))
+
+
 # Führe die TestSuite aus
 if __name__ == '__main__':
     unittest.main()

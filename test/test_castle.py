@@ -87,6 +87,17 @@ class TestEnlargement(unittest.TestCase):
         result1 = self.castle.Enlargement(cluster1, tuple1)
         self.assertAlmostEqual(result1, expected_result1, places=3)
 
+    def test_delay_constraint(self):
+        castle = Castle({(0,0, 52, 'Secondary School'), (1,1, 51, 'Bachelors'), (2,2, 61, 'Ph.D'), (3,3,51,'Bachelors')}, 3, 3, 3)
+        tuple1 = Tuple(0,0, 52, 'Secondary School')
+        tuple2 = Tuple(1,1, 51, 'Bachelors')
+        tuple3 = Tuple(2,2, 61, 'Ph.D')
+        tuple4 = Tuple(3,3, 51, 'Bachelors')
+        cluster1 = Cluster(tuple1)
+        cluster2 = Cluster(tuple2)
+        cluster3 = Cluster(tuple3)
+        castle.not_anonymized_clusters = {cluster1, cluster2, cluster3}
+        castle.delay_constraint(tuple1)
 
 # Ausführen der Test-Suite
 if __name__ == "__main__":

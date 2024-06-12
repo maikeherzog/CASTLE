@@ -34,9 +34,9 @@ class Castle:
     def castle_algo(self, S):
         while self.stream and self.pos_stream < len(self.stream):
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
-            #print("____________________________________________________________________________________________________")
+            print("____________________________________________________________________________________________________")
             #print("Position Stream:", self.pos_stream)
-            #print("Tuple", next_tupel.qi)
+            print("Tuple", next_tupel.qi)
             #print("-------not_anomized_clusters befor best_selection-------")
             """for cluster in self.not_anonymized_clusters:
                 print(cluster.t, cluster.data)
@@ -45,11 +45,11 @@ class Castle:
             #print("--------------")
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
-                #print(f"best_cluster for {next_tupel.qi} is None")
+                print(f"best_cluster for {next_tupel.qi} is None")
                 new_cluster = Cluster(next_tupel)
                 self.not_anonymized_clusters.add(new_cluster)
                 best_cluster = new_cluster
-                #print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
+                print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
             else:
                 #print("-------not_anomized_clusters-------")
                 """for cluster in self.not_anonymized_clusters:
@@ -58,28 +58,32 @@ class Castle:
                         print("Data:", tupel.qi)"""
                 #print("--------------")
                 best_cluster.add_tupel(next_tupel)
-                #print(f"tupel {next_tupel.qi} added to cluster {best_cluster.t}")
+                print(f"tupel {next_tupel.qi} added to cluster {best_cluster.t}")
 
             if self.pos_stream - self.delta < 0:
-                #print("pos_stream - delta < 0")
+                print("pos_stream - delta < 0")
                 tuple_prime = None
             else:
-                #print("Tuple_prime:", S[self.pos_stream - self.delta].qi)
+                print("Tuple_prime:", S[self.pos_stream - self.delta].qi)
                 tuple_prime = S[self.pos_stream - self.delta]
 
             #print("Anonymized Cluster_____:", cluster.t)
+            """for k in self.output:
+                print("Outputed:", k.qi)"""
+
             if tuple_prime not in self.output and tuple_prime is not None: #TODO: hier prüfen, ob es schon ausgegeben wurde
-                #best_cluster = self.best_selection(tuple_prime)
-                self.delay_constraint(tuple_prime, best_cluster)
+                best_cluster = self.best_selection(tuple_prime)
+                print("delay contraint start")
+                self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
 
-    def delay_constraint(self, tuple_prime, best_cluster):
-        #print("delay_constraint")
-        # ich übergebe das bestpasssende cluster, dann muss ich es nicht erst neu berechnen
-        if len(best_cluster) >= self.k:
+    def delay_constraint(self, tuple_prime):
+        #find tuple prime in not_anonymized_clusters
+        cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
+        if len(cluster_of_tuple_prime) >= self.k:
             #print("best_cluster, wenn len > k:", best_cluster.t)
-            self.output_cluster(best_cluster)
+            self.output_cluster(cluster_of_tuple_prime)
         else:
             KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
             # prüfen ob KC_set nicht leer ist
@@ -89,10 +93,11 @@ class Castle:
                 return
             m = 0
             for cluster in self.not_anonymized_clusters:
-                if len(best_cluster)<len(cluster):
+                if len(cluster_of_tuple_prime)<len(cluster):
                     m = m+1
             if m > (len(self.not_anonymized_clusters)/2):
                 # suppress tuple prime
+                print("Suppress Tuple")
                 self.suppress_tuple(tuple_prime)
                 return
             if sum(len(cluster) for cluster in self.not_anonymized_clusters) < self.k:
@@ -103,26 +108,29 @@ class Castle:
             clusters_without_best_cluster = copy.deepcopy(self.not_anonymized_clusters)
 
             for i in clusters_without_best_cluster:
-                if i.check_cluster_if_equal(best_cluster):
+                if i.check_cluster_if_equal(cluster_of_tuple_prime):
                     clusters_without_best_cluster.remove(i)
                     break
-            MC = self.merge_cluster(best_cluster, clusters_without_best_cluster)
+            MC = self.merge_cluster(cluster_of_tuple_prime, clusters_without_best_cluster)
             self.output_cluster(MC)
 
 
     def suppress_tuple(self, tuple):
         # TODO: nochmal prüfen
+        print("Suppress Tuple", tuple.qi)
         self.stream.remove(tuple)
+        self.pos_stream -= 1
 
     def output_anonymized_cluster(self, cluster):
         output_tuples = cluster.output_tuples()
-        self.output.extend(output_tuples)
+        self.output.extend(cluster.data)
         for tuple in output_tuples:
             print("Output_:", tuple.qi)
 
     def output_cluster(self, cluster):
-        #print("Output Cluster Funktion")
+        print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k:
+            # TODO: hier nochmal schauen
             for i in self.not_anonymized_clusters:
                 split_cluster = self.split(cluster)
             self.not_anonymized_clusters.remove(cluster)
@@ -132,7 +140,8 @@ class Castle:
             split_cluster = {cluster}
         for cluster in split_cluster:
             output_tuples = cluster.output_tuples()
-            self.output.extend(output_tuples)
+            self.output.extend(cluster.data)
+
             for tuple in output_tuples:
                 print("_Output:", tuple.qi)
             self.tao = self.average_Loss()
@@ -155,7 +164,7 @@ class Castle:
         #print("removed")
 
     def split(self, cluster):
-        #print("Split Function")
+        print("Split Function")
         split_cluster = set()
         BS = self.group_tuples_by_pid(cluster.data)
         while len(BS) >= self.k:
@@ -240,9 +249,8 @@ class Castle:
         return grouped_data
 
     def merge_cluster(self, cluster, set_of_clusters):
-        #print("merge Cluster Funktion")
+        print("merge Cluster Funktion")
         # set_of clusters besteht aus non_anonymized_clusters
-        leng = len(cluster)
         while len(cluster) < self.k:
             min_enlargement = float('inf')
 
@@ -260,7 +268,15 @@ class Castle:
             # fügt die Tupel des min_enlargement_cluster zu cluster hinzu
             for tupel in min_enlargement_cluster.data:
                 cluster.add_tupel(tupel)
-            # not_anonymized_clusters.remove(min_enlargement_cluster)
+
+            for j in self.not_anonymized_clusters:
+                print("i.t", j.t)
+            print("c", c.t)
+            print("min_enlargement_cluster.t", min_enlargement_cluster.t)
+            for i in self.not_anonymized_clusters:
+                if i.check_cluster_if_equal(min_enlargement_cluster):
+                    self.not_anonymized_clusters.remove(i)
+                    break
         return cluster
 
     def best_selection(self, tuple)-> Cluster:
