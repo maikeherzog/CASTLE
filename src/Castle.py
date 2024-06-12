@@ -450,10 +450,11 @@ class Castle:
             return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
-        #TODO: Das auf größere Tupel anpassen
-        #print("Tuple1:", tuple1.qi)
-        #print("Tuple2:", tuple2.qi)
-        num_diff = abs(tuple1.qi[0] - tuple2.qi[0])
-        str_diff = 0 if tuple1.qi[1] == tuple2.qi[1] else 1
+        num_diff = 0
+        str_diff = 0
+        for i in range(len(tuple1.qi)):
+            if isinstance(tuple1.qi[i], int):
+                num_diff += abs(tuple1.qi[i] - tuple2.qi[i])
+            else:
+                str_diff += 0 if tuple1.qi[i] == tuple2.qi[i] else 1
         return math.sqrt(num_diff ** 2 + str_diff ** 2)*(-1)
-

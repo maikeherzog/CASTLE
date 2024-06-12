@@ -36,7 +36,8 @@ def edit_data(path_from, path_to):
     for line in lines:
         # Check for '?' in the line
         if '?' not in line and line.strip():
-            cleaned_lines.append(line.strip())
+            cleaned_line = ",".join(component.strip() for component in line.split(','))
+            cleaned_lines.append(cleaned_line)
 
     # Column labelling
     header = "pid, time, age, workclass, fnlwgt, education, education-num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
