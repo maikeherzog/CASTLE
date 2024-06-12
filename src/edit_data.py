@@ -35,13 +35,20 @@ def edit_data(path_from, path_to):
     for line in lines:
         # Check for '?' in the line
         if '?' not in line and line.strip():
-            cleaned_lines.append(line.strip())
+            cleaned_line = ",".join(component.strip() for component in line.split(','))
+            cleaned_lines.append(cleaned_line)
 
     # Column labelling
-    header = "age, workclass, fnlwgt, education, education-num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
+    header = "pid, time, age, workclass, fnlwgt, education, education-num, marital-status, occupation, relationship, race, sex, capital-gain, capital-loss, hours-per-week, native-country, income"
+
+    # add pid and time
+    numbered_lines = []
+    for i, line in enumerate(cleaned_lines):
+        numbered_line = f"{i}, {i}, " + line
+        numbered_lines.append(numbered_line)
 
     # add header and cleaned lines
-    cleaned_data = [header] + cleaned_lines
+    cleaned_data = [header] + numbered_lines
 
     # Write the cleaned data to a new file
     with open(path_to, 'w') as f:
@@ -49,7 +56,6 @@ def edit_data(path_from, path_to):
             f.write(line + '\n')
 
     print(f"Clean-up completed and the data was written to a new file with the path {path_to}.")
-
 
 def process_tuple(tuple_data, attribute_properties):
     processed_tuple = []

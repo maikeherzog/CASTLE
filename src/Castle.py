@@ -5,6 +5,7 @@ import random
 import sys
 
 from src.Cluster import Cluster
+from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties_test
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
@@ -128,7 +129,7 @@ class Castle:
             print("Output_:", tuple.qi)
 
     def output_cluster(self, cluster):
-        print("Output Cluster Funktion")
+        #print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k:
             # TODO: hier nochmal schauen
             for i in self.not_anonymized_clusters:
@@ -164,7 +165,7 @@ class Castle:
         #print("removed")
 
     def split(self, cluster):
-        print("Split Function")
+        #print("Split Function")
         split_cluster = set()
         BS = self.group_tuples_by_pid(cluster.data)
         while len(BS) >= self.k:
@@ -172,7 +173,7 @@ class Castle:
             selected_tuple = random.choice(BS[selected_bucket])
             new_cluster = Cluster(selected_tuple)
             if not selected_bucket:
-                del(selected_bucket)
+                selected_bucket = None
             # H is heap with k-1 nodes
             H = self.initialize_heap(selected_tuple)
             #H = [(float('inf'), i) for i in range(self.k - 1)]
@@ -186,18 +187,18 @@ class Castle:
 
                 # Distanz von t ist kleiner als die Distanz des Wurzelelements von H
 
-                if t_dist < H[0][0]:
+                if t_dist < H[0].dist:
                     # Ersetze Wurzelelement mit t
-                    heapq.heapreplace(H, (t_dist, tuple_from_bucket))
-                elif len(H) == self.k - 1 and t_dist >= H[0][0]:
+                    heapq.heapreplace(H, HeapElement(t_dist, tuple_from_bucket))
+                elif len(H) == self.k - 1 and t_dist >= H[0].dist:
                     #print("t_dist:", t_dist)
                     #print("tuple_from_bucket:", tuple_from_bucket.qi)
                     #print("H:", H)
-                    heapq.heappushpop(H, (t_dist, tuple_from_bucket))
+                    heapq.heappushpop(H, HeapElement(t_dist, tuple_from_bucket))
                 else:
-                    heapq.heappush(H, (t_dist, tuple_from_bucket))
-            for node in H:
-                tuple_in_node = node[1]
+                    heapq.heappush(H, HeapElement(t_dist, tuple_from_bucket))
+            for heap_element in H:
+                tuple_in_node = heap_element.tuple
                 new_cluster.add_tupel(tuple_in_node)
                 for bucket in BS:
                     if tuple_in_node in BS[bucket]:
@@ -231,7 +232,7 @@ class Castle:
 
             # Die heapq-Bibliothek erlaubt es nur Min-Heap zu bauen,
             # deswegen nehmen wir -1*distance, um einen Max-Heap zu simulieren, da es nach der Beschreibung aussieht, dass du einen Max-Heap willst
-            H.append((distance * (-1), node))
+            H.append(HeapElement(distance * (-1), node))
 
         # Heapfify ist eine Funktion, die eine Liste in-place in einen Heap umwandelt.
         heapq.heapify(H)
@@ -450,10 +451,14 @@ class Castle:
             return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
-        #TODO: Das auf größere Tupel anpassen
-        #print("Tuple1:", tuple1.qi)
-        #print("Tuple2:", tuple2.qi)
-        num_diff = abs(tuple1.qi[0] - tuple2.qi[0])
-        str_diff = 0 if tuple1.qi[1] == tuple2.qi[1] else 1
-        return math.sqrt(num_diff ** 2 + str_diff ** 2)*(-1)
+        #TODO: Rechnung überprüfen
+        num_diff = 0
+        str_diff = 0
+        for i in range(len(tuple1.qi)):
+            if isinstance(tuple1.qi[i], int):
+                num_diff += abs(tuple1.qi[i] - tuple2.qi[i])
+            else:
+                str_diff += 0 if tuple1.qi[i] == tuple2.qi[i] else 1
+        return math.sqrt(num_diff ** 2 + str_diff ** 2) * (-1)
+
 
