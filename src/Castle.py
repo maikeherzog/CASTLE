@@ -37,14 +37,7 @@ class Castle:
         while self.stream and self.pos_stream < len(self.stream):
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
             print("____________________________________________________________________________________________________")
-            #print("Position Stream:", self.pos_stream)
             print("Tuple", next_tupel.qi)
-            #print("-------not_anomized_clusters befor best_selection-------")
-            """for cluster in self.not_anonymized_clusters:
-                print(cluster.t, cluster.data)
-                for tupel in cluster.data:
-                    print("Data:", tupel.qi)"""
-            #print("--------------")
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
                 print(f"best_cluster for {next_tupel.qi} is None")
@@ -53,29 +46,16 @@ class Castle:
                 best_cluster = new_cluster
                 print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
             else:
-                #print("-------not_anomized_clusters-------")
-                """for cluster in self.not_anonymized_clusters:
-                    print(cluster.t, cluster.data)#
-                    for tupel in cluster.data:
-                        print("Data:", tupel.qi)"""
-                #print("--------------")
                 best_cluster.add_tupel(next_tupel)
                 print(f"tupel {next_tupel.qi} added to cluster {best_cluster.t}")
 
             if self.pos_stream - self.delta < 0:
-                print("pos_stream - delta < 0")
                 tuple_prime = None
             else:
                 print("Tuple_prime:", S[self.pos_stream - self.delta].qi)
                 tuple_prime = S[self.pos_stream - self.delta]
 
-            #print("Anonymized Cluster_____:", cluster.t)
-            """for k in self.output:
-                print("Outputed:", k.qi)"""
-
-            if tuple_prime not in self.output and tuple_prime is not None: #TODO: hier prüfen, ob es schon ausgegeben wurde
-                best_cluster = self.best_selection(tuple_prime)
-                print("delay contraint start")
+            if tuple_prime not in self.output and tuple_prime is not None: #hier prüfen, ob es schon ausgegeben wurde
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
@@ -85,7 +65,6 @@ class Castle:
         cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
         #if len(cluster_of_tuple_prime) >= self.k:
         if cluster_of_tuple_prime.is_k_anonymous(self.k):
-            #print("best_cluster, wenn len > k:", best_cluster.t)
             self.output_cluster(cluster_of_tuple_prime)
         else:
             KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
@@ -133,9 +112,7 @@ class Castle:
     def output_cluster(self, cluster):
         #print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k:
-            # TODO: hier nochmal schauen
-            for i in self.not_anonymized_clusters:
-                split_cluster = self.split(cluster)
+            split_cluster = self.split(cluster)
             self.not_anonymized_clusters.remove(cluster)
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
@@ -149,22 +126,13 @@ class Castle:
                 print("_Output:", tuple.qi)
             self.tao = self.average_Loss()
             if self.InfoLoss(cluster.t) >= self.tao:
-                # TODO: ich hatte hier erst auch die self.pos_stream mit hinzufügen wollen warum?
-                # self.anonymized_clusters.add(cluster, self.pos_stream)
                 self.anonymized_clusters.add(cluster)
                 Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
                 self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                # Muss das noch aus den nicht anonymisierten Clustern entfernt werden? Bzw. Müssen die Tuple entfernt werden?
-                #self.not_anonymized_clusters.remove(cluster)
             else:
                 # TODO: stimmt das hier so, dass das da entfern werden soll?
-                #split_cluster.remove(cluster)
                 continue
-                # not_anonymized_clusters.remove(cluster)
-                #pass
-        #print("Cluster", cluster.t)
         self.not_anonymized_clusters.remove(cluster)
-        #print("removed")
 
     def split(self, cluster):
         #print("Split Function")
@@ -193,9 +161,6 @@ class Castle:
                     # Ersetze Wurzelelement mit t
                     heapq.heapreplace(H, HeapElement(t_dist, tuple_from_bucket))
                 elif len(H) == self.k - 1 and t_dist >= H[0].dist:
-                    #print("t_dist:", t_dist)
-                    #print("tuple_from_bucket:", tuple_from_bucket.qi)
-                    #print("H:", H)
                     heapq.heappushpop(H, HeapElement(t_dist, tuple_from_bucket))
                 else:
                     heapq.heappush(H, HeapElement(t_dist, tuple_from_bucket))
@@ -273,10 +238,6 @@ class Castle:
             for tupel in min_enlargement_cluster.data:
                 cluster.add_tupel(tupel)
 
-            for j in self.not_anonymized_clusters:
-                print("i.t", j.t)
-            print("c", c.t)
-            print("min_enlargement_cluster.t", min_enlargement_cluster.t)
             for i in self.not_anonymized_clusters:
                 if i.check_cluster_if_equal(min_enlargement_cluster):
                     self.not_anonymized_clusters.remove(i)
@@ -300,7 +261,6 @@ class Castle:
         set_c_ok = set()
         for cluster in set_cluster_min:
             #IL_cluster = self.InfoLoss(cluster.t)
-            #TODO: stimmt das hier mit dem Enlargement?
             IL_cluster = self.Enlargement(cluster, tuple)
             if IL_cluster <= self.tao:
                 set_c_ok.add(cluster)
@@ -426,8 +386,6 @@ class Castle:
             #return attribut_range / (domain_range[1] - domain_range[0])
             return 0
         if len(attribut_range) == 1:
-            # TODO: hier nochmal schauen ob das stimmt
-            #return (attribut_range[0]) / (domain_range[1] - domain_range[0])
             return 0
         return (attribut_range[1] - attribut_range[0]) / (domain_range[1] - domain_range[0])
 
@@ -454,7 +412,6 @@ class Castle:
             return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
-        #TODO: Rechnung überprüfen
         num_diff = 0
         str_diff = 0
         for i in range(len(tuple1.qi)):
