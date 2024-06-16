@@ -7,7 +7,7 @@ class Tuple:
 
   """
 
-  def __init__(self, pid, time, qi, sensitive_attributes):
+  def __init__(self, time, pid, qi, sensitive_attributes):
     self.pid = pid
     self.time = time
     self.qi = qi

@@ -125,7 +125,7 @@ class Cluster:
 
     return True
 
-  def is_k_anonymous(self, k, δ, β):
+  def is_k_anonymous(self, k):
     """
     Überprüft, ob der Cluster k-anonym ist.
 
@@ -138,24 +138,20 @@ class Cluster:
       `True`, wenn der Cluster k-anonym ist, sonst `False`.
     """
 
-    # TODO: Implementieren Sie die Prüfung der k-Anonymität
+    if len(self.data) >= k and len(self.group_tuples_by_pid()) >= k:
+      return True
+    return False
 
-    return True
+  def group_tuples_by_pid(self) -> dict:
+      grouped_data = dict()
+      for tupel in self.data:
+          pid = tupel.pid
+          if pid in grouped_data:
+              grouped_data[pid].append(tupel)
+          else:
+              grouped_data[pid] = [tupel]
+      return grouped_data
 
-  def can_add(self, t):
-    """
-    Überprüft, ob der Datensatz `t` zum Cluster hinzugefügt werden kann.
-
-    Args:
-      t: Der Datensatz.
-
-    Returns:
-      `True`, wenn der Datensatz hinzugefügt werden kann, sonst `False`.
-    """
-
-    # TODO: Implementieren Sie die Prüfung, ob der Datensatz hinzugefügt werden kann
-
-    return True
 
   def output_tuples(self) -> list:
       generalized_tupels = []
@@ -164,23 +160,6 @@ class Cluster:
         copied_tuple.set_qi(self.t)
         generalized_tupels.append(copied_tuple)
       return generalized_tupels
-
-  """
-  def tuple_enlargement(self, tupel, global_ranges: Dict[str, Range]) -> float:
-    Calculates the enlargement value for adding <item> into this cluster
-
-    Args:
-        item: The tuple to calculate enlargement based on
-        global_ranges: The globally known ranges for each attribute
-
-    Returns: The information loss if we added item into this cluster
-
-    
-    given = self.information_loss_given_t(tuple, global_ranges)
-    current = self.information_loss(global_ranges)
-
-    return (given - current) / len(self.ranges)
-  """
 
   def update(self, tuples):
     for tuple in tuples:

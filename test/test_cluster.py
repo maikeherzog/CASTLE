@@ -11,7 +11,7 @@ class TestCluster(unittest.TestCase):
     def setUp(self):
         #self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
         self.t = Tuple(0, 0, (52, 'Secondary School'),())
-        self.c = Cluster(self.t)
+        self.c = Cluster(self.t, "easy_data")
     def test_add_tupel(self):
         t = Tuple(0, 0, (52, 'Secondary School'),())
         c = Cluster(t)
@@ -118,7 +118,32 @@ class TestCluster(unittest.TestCase):
         c2 = Cluster(tuple1)
         self.assertFalse(c2.check_if_tuple_is_in_cluster(tuple2))
 
+    def test_is_k_anonymous(self):
+        tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
+        c1 = Cluster(tuple1, "easy_data")
+        tuple2 = Tuple(1, 2, (52, 'Secondary School'), ())
+        c1.add_tupel(tuple2)
 
+        c2 = Cluster(tuple1, "easy_data")
+        tuple3 = Tuple(2, 3, (52, 'Secondary School'), ())
+        c2.add_tupel(tuple3)
+
+        self.assertFalse(c1.is_k_anonymous(2))
+        self.assertTrue(c2.is_k_anonymous(2))
+
+    def test_group_by_pid(self):
+        tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
+        c1 = Cluster(tuple1, "easy_data")
+        tuple2 = Tuple(1, 2, (52, 'Secondary School'), ())
+        c1.add_tupel(tuple2)
+
+        self.assertEqual(c1.group_tuples_by_pid(), {1: [tuple1, tuple2]})
+
+        c2 = Cluster(tuple1, "easy_data")
+        tuple3 = Tuple(2, 3, (52, 'Secondary School'), ())
+        c2.add_tupel(tuple3)
+
+        self.assertEqual(c2.group_tuples_by_pid(), {1: [tuple1], 2: [tuple3]})
 # Führe die TestSuite aus
 if __name__ == '__main__':
     unittest.main()

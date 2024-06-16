@@ -83,7 +83,8 @@ class Castle:
     def delay_constraint(self, tuple_prime):
         #find tuple prime in not_anonymized_clusters
         cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
-        if len(cluster_of_tuple_prime) >= self.k:
+        #if len(cluster_of_tuple_prime) >= self.k:
+        if cluster_of_tuple_prime.is_k_anonymous(self.k):
             #print("best_cluster, wenn len > k:", best_cluster.t)
             self.output_cluster(cluster_of_tuple_prime)
         else:
@@ -168,7 +169,7 @@ class Castle:
     def split(self, cluster):
         #print("Split Function")
         split_cluster = set()
-        BS = self.group_tuples_by_pid(cluster.data)
+        BS = cluster.group_tuples_by_pid()
         while len(BS) >= self.k:
             selected_bucket = random.choice(list(BS.keys()))
             selected_tuple = random.choice(BS[selected_bucket])
@@ -240,7 +241,7 @@ class Castle:
 
         return H
 
-    def group_tuples_by_pid(self, cluster_data):
+    """def group_tuples_by_pid(self, cluster_data):
         grouped_data = dict()
         for tupel in cluster_data:
             pid = tupel.pid
@@ -249,11 +250,12 @@ class Castle:
             else:
                 grouped_data[pid] = [tupel]
         return grouped_data
-
+"""
     def merge_cluster(self, cluster, set_of_clusters):
         print("merge Cluster Funktion")
         # set_of clusters besteht aus non_anonymized_clusters
-        while len(cluster) < self.k:
+        #while len(cluster) < self.k:
+        while cluster.is_k_anonymous(self.k) == False:
             min_enlargement = float('inf')
 
             for c in set_of_clusters:
