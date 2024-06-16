@@ -6,12 +6,12 @@ import sys
 
 from src.Cluster import Cluster
 from src.HeapElement import HeapElement
-from src.edit_data import attribute_properties_test
+from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
 class Castle:
-    def __init__(self, stream, k, delta, beta):
+    def __init__(self, stream, k, delta, beta, name_dataset):
         self.not_anonymized_clusters = set()
         self.anonymized_clusters = set()
         self.tao = 0
@@ -22,6 +22,7 @@ class Castle:
         self.delta = delta
         self.anonymized_clusters_InfoLoss = []
         self.output = []
+        self.name_dataset = name_dataset
 
     def set_anonymized_clusters(self, anonymized_clusters):
         self.anonymized_clusters = anonymized_clusters
@@ -47,7 +48,7 @@ class Castle:
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
                 print(f"best_cluster for {next_tupel.qi} is None")
-                new_cluster = Cluster(next_tupel)
+                new_cluster = Cluster(next_tupel, self.name_dataset)
                 self.not_anonymized_clusters.add(new_cluster)
                 best_cluster = new_cluster
                 print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
@@ -171,7 +172,7 @@ class Castle:
         while len(BS) >= self.k:
             selected_bucket = random.choice(list(BS.keys()))
             selected_tuple = random.choice(BS[selected_bucket])
-            new_cluster = Cluster(selected_tuple)
+            new_cluster = Cluster(selected_tuple, self.name_dataset)
             if not selected_bucket:
                 selected_bucket = None
             # H is heap with k-1 nodes
@@ -353,10 +354,10 @@ class Castle:
     def add_tupel(self, cluster, tupel):
         new_cluster = list(cluster)
         for i in range(len(cluster) - 1):
-            if attribute_properties_test[i]['type'] == 'continuous':
+            if attribute_properties[self.name_dataset][i]['type'] == 'continuous':
                 new_cluster[i] = self.adjust_interval(tupel[i], cluster[i])
 
-            elif attribute_properties_test[i]['type'] == 'cathegorical':
+            elif attribute_properties[self.name_dataset][i]['type'] == 'cathegorical':
                 new_cluster[i] = self.add_unique_string_to_list(tupel[i], cluster[i])
 
         return tuple(new_cluster)
@@ -404,18 +405,18 @@ class Castle:
 
     def VInfoLoss(self, attribut, pos) -> int:
         info_loss = 0
-        if attribute_properties_test[pos]['type'] == 'continuous':
-            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties_test[pos]['interval'])
-        elif attribute_properties_test[pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties_test[pos]['hierarchy_tree'])
+        if attribute_properties[self.name_dataset][pos]['type'] == 'continuous':
+            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[self.name_dataset][pos]['interval'])
+        elif attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
+            info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
         return info_loss
 
     def VInfoLoss_cluster(self, attribut, pos) -> int:
         info_loss = 0
-        if attribute_properties_test[pos]['type'] == 'continuous':
-            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties_test[pos]['interval'])
-        elif attribute_properties_test[pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical_cluster(attribut, attribute_properties_test[pos]['hierarchy_tree'])
+        if attribute_properties[self.name_dataset][pos]['type'] == 'continuous':
+            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[self.name_dataset][pos]['interval'])
+        elif attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
+            info_loss = self.VInfoLoss_cathegorical_cluster(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
         return info_loss
 
     def VInfoLoss_continuos(self, attribut_range, domain_range):

@@ -11,8 +11,8 @@ print("hello world")
 
 
 # Pfad zur CSV-Datei
-#csv_datei_pfad = '../data/adult.csv'
-csv_datei_pfad = '../data/easy_data.csv'
+csv_datei_pfad = '../data/adult.csv'
+#csv_datei_pfad = '../data/easy_data.csv'
 
 # Anzahl der Zeilen, die eingelesen werden sollen
 anzahl_zeilen = 1000
@@ -36,14 +36,14 @@ data_tuples = list(df.itertuples(index=False, name=None))
 print(data_tuples)
 
 #Data for adult data
-#data = Data(data_tuples, [2,16], [])
-#print (data.data[0].qi)
-
-#Data for easy data
-data = Data(data_tuples, [2,3], [])
+data = Data(data_tuples, [2,16], [])
 print (data.data[0].qi)
 
-castle = Castle(data.data, 4, 3, 2)
+#Data for easy data
+#data = Data(data_tuples, [2,3], [])
+#print (data.data[0].qi)
+
+castle = Castle(data.data, 10, 8, 5, "adult")
 print(castle.castle_algo(data.data))
 
 

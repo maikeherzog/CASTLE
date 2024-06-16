@@ -162,7 +162,7 @@ native_country_tree = {
                     'name': 'South America',
                     'children': [
                         {'name': 'Peru'},
-                        {'name': 'Colombia'},
+                        {'name': 'Columbia'},
                         {'name': 'Ecuador'},
                         {'name': 'Bolivia'}
                     ]
@@ -278,7 +278,10 @@ native_country_tree = {
                 {'name': 'Fiji'},
                 {'name': 'Papua-New-Guinea'}
             ]
-        }
+        },
+{
+            'name': 'South',
+        },
     ]
 }
 
