@@ -35,6 +35,7 @@ class Castle:
 
     def castle_algo(self, S):
         while self.stream and self.pos_stream < len(self.stream):
+            print("pos_stream", self.pos_stream)
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
             print("____________________________________________________________________________________________________")
             print("Tuple", next_tupel.qi)
@@ -248,6 +249,7 @@ class Castle:
                 if i.check_cluster_if_equal(min_enlargement_cluster):
                     set_of_clusters.remove(i)
                     break
+
             is_cluster_k_ano = cluster.is_k_anonymous(self.k)
 
         return cluster
@@ -417,7 +419,7 @@ class Castle:
         if len(self.anonymized_clusters_InfoLoss) == 0:
             return 0
         else:
-            return 1/len(self.anonymized_clusters_InfoLoss) * sum(self.anonymized_clusters_InfoLoss)
+            return (1/len(self.anonymized_clusters_InfoLoss)) * sum(self.anonymized_clusters_InfoLoss)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
         num_diff = 0

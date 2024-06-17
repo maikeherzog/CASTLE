@@ -1,6 +1,7 @@
 
 import pandas as pd
 
+from graph.plot_graph import plot_graph
 from src.Castle import Castle
 from src.Data import Data
 from src.edit_data import process_tuple, attribute_properties, edit_data
@@ -16,7 +17,7 @@ csv_datei_pfad = '../data/adult.csv'
 #csv_datei_pfad = '../data/easy_data_double.csv'
 
 # Anzahl der Zeilen, die eingelesen werden sollen
-anzahl_zeilen = 500
+anzahl_zeilen = 5000
 
 # CSV-Datei mit pandas einlesen, nur die ersten 5 Zeilen
 df = pd.read_csv(csv_datei_pfad, nrows=anzahl_zeilen)
@@ -39,6 +40,8 @@ print(data_tuples)
 #Data for adult data
 data = Data(data_tuples, [2,16], [])
 #data = Data(data_tuples, [2,6], [])
+# data just continuous attributes
+data = Data(data_tuples, [2,16], [])
 print (data.data[0].qi)
 
 #Data for easy data
@@ -49,8 +52,14 @@ print (data.data[0].qi)
 #data = Data(data_tuples, [2,4], [])
 #print (data.data[0].qi)
 
-castle = Castle(data.data, 10, 8, 5, "adult")
+castle = Castle(data.data, 100, 1000, 50, "adult")
 print(castle.castle_algo(data.data))
+
+x_values = range(1, len(castle.anonymized_clusters_InfoLoss) + 1)
+y_values = [sum(castle.anonymized_clusters_InfoLoss[:i])/i for i in x_values]
+#y_values = castle.anonymized_clusters_InfoLoss
+
+plot_graph(x_values, y_values)
 
 
 
