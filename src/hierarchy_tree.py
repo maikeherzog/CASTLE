@@ -177,6 +177,12 @@ native_country_tree = {
                         {'name': 'Dominican-Republic'},
                         {'name': 'Trinadad&Tobago'}
                     ]
+                },
+                {
+                    'name': 'Outlying-US(Guam-USVI-etc)',
+                },
+                {
+                    'name': 'Hong'
                 }
             ]
         },

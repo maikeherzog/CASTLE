@@ -121,15 +121,20 @@ class TestCluster(unittest.TestCase):
     def test_is_k_anonymous(self):
         tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
         c1 = Cluster(tuple1, "easy_data")
-        tuple2 = Tuple(1, 2, (52, 'Secondary School'), ())
+        tuple2 = Tuple(2, 2, (52, 'Secondary School'), ())
+        tuple3 = Tuple(3, 2, (53, 'Secondary School'), ())
         c1.add_tupel(tuple2)
+        c1.add_tupel(tuple3)
+
+        self.assertFalse(c1.is_k_anonymous(3))
 
         c2 = Cluster(tuple1, "easy_data")
-        tuple3 = Tuple(2, 3, (52, 'Secondary School'), ())
-        c2.add_tupel(tuple3)
+        tuple4 = Tuple(2, 3, (52, 'Secondary School'), ())
+        tuple5 = Tuple(3, 4, (53, 'Secondary School'), ())
+        c2.add_tupel(tuple4)
+        c2.add_tupel(tuple5)
 
-        self.assertFalse(c1.is_k_anonymous(2))
-        self.assertTrue(c2.is_k_anonymous(2))
+        self.assertTrue(c2.is_k_anonymous(3))
 
     def test_group_by_pid(self):
         tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
@@ -144,6 +149,16 @@ class TestCluster(unittest.TestCase):
         c2.add_tupel(tuple3)
 
         self.assertEqual(c2.group_tuples_by_pid(), {1: [tuple1], 2: [tuple3]})
+
+    def test_set_qi_generalized(self):
+        tuple1 = Tuple(1, 1, (18, 'Bachelors'), ())
+        c1 = Cluster(tuple1, "easy_data")
+        tuple2 = Tuple(1, 2, (52, 'Secondary School'), ())
+        c1.add_tupel(tuple2)
+
+        self.assertEqual(c1.set_qi_generalized(([18, 52], ['Bachelors', 'Secondary School'])), ([18,52], 'Any Education') )
+
+
 # Führe die TestSuite aus
 if __name__ == '__main__':
     unittest.main()

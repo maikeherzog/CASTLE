@@ -1,3 +1,7 @@
+from src.edit_data import attribute_properties
+from src.tree_functions import find_generalization
+
+
 class Tuple:
   """
   Ein Datensatz.

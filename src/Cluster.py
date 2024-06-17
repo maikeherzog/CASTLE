@@ -2,6 +2,7 @@ import copy
 
 from src.Tupel import Tuple
 from src.edit_data import attribute_properties
+from src.tree_functions import find_generalization
 
 
 class Cluster:
@@ -138,9 +139,10 @@ class Cluster:
       `True`, wenn der Cluster k-anonym ist, sonst `False`.
     """
 
-    if len(self.data) >= k and len(self.group_tuples_by_pid()) >= k:
+    if len(self.data) < k or len(self.group_tuples_by_pid()) < k:
+      return False
+    else:
       return True
-    return False
 
   def group_tuples_by_pid(self) -> dict:
       grouped_data = dict()
@@ -157,9 +159,18 @@ class Cluster:
       generalized_tupels = []
       for tupel in self.data:
         copied_tuple = copy.copy(tupel)
-        copied_tuple.set_qi(self.t)
+        qi_generalized = self.set_qi_generalized(self.t)
+        copied_tuple.set_qi(qi_generalized)
         generalized_tupels.append(copied_tuple)
       return generalized_tupels
+
+  def set_qi_generalized(self, qi):
+    print("QI:", qi)
+    qi = list(qi)
+    for pos in range(len(qi)):
+      if attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
+        qi[pos] = find_generalization(attribute_properties[self.name_dataset][pos]['hierarchy_tree'], qi[pos])
+    return tuple(qi)
 
   def update(self, tuples):
     for tuple in tuples:

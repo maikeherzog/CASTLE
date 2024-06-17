@@ -11,12 +11,12 @@ print("hello world")
 
 
 # Pfad zur CSV-Datei
-#csv_datei_pfad = '../data/adult.csv'
+csv_datei_pfad = '../data/adult.csv'
 #csv_datei_pfad = '../data/easy_data.csv'
-csv_datei_pfad = '../data/easy_data_double.csv'
+#csv_datei_pfad = '../data/easy_data_double.csv'
 
 # Anzahl der Zeilen, die eingelesen werden sollen
-anzahl_zeilen = 1000
+anzahl_zeilen = 500
 
 # CSV-Datei mit pandas einlesen, nur die ersten 5 Zeilen
 df = pd.read_csv(csv_datei_pfad, nrows=anzahl_zeilen)
@@ -37,18 +37,19 @@ data_tuples = list(df.itertuples(index=False, name=None))
 print(data_tuples)
 
 #Data for adult data
-#data = Data(data_tuples, [2,16], [])
-#print (data.data[0].qi)
+data = Data(data_tuples, [2,16], [])
+#data = Data(data_tuples, [2,6], [])
+print (data.data[0].qi)
 
 #Data for easy data
-#data = Data(data_tuples, [2,3], [])
+#data = Data(data_tuples, [2,4], [])
 #print (data.data[0].qi)
 
 #Data for easy data double
-data = Data(data_tuples, [2,4], [])
-print (data.data[0].qi)
+#data = Data(data_tuples, [2,4], [])
+#print (data.data[0].qi)
 
-castle = Castle(data.data, 2, 6, 6, "easy_data")
+castle = Castle(data.data, 10, 8, 5, "adult")
 print(castle.castle_algo(data.data))
 
 

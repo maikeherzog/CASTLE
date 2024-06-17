@@ -61,6 +61,7 @@ class Castle:
             self.pos_stream += 1
 
     def delay_constraint(self, tuple_prime):
+        print('delay_constraint')
         #find tuple prime in not_anonymized_clusters
         cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
         #if len(cluster_of_tuple_prime) >= self.k:
@@ -110,7 +111,7 @@ class Castle:
             print("Output_:", tuple.qi)
 
     def output_cluster(self, cluster):
-        #print("Output Cluster Funktion")
+        print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k:
             split_cluster = self.split(cluster)
             self.not_anonymized_clusters.remove(cluster)
@@ -135,7 +136,7 @@ class Castle:
         self.not_anonymized_clusters.remove(cluster)
 
     def split(self, cluster):
-        #print("Split Function")
+        print("Split Function")
         split_cluster = set()
         BS = cluster.group_tuples_by_pid()
         while len(BS) >= self.k:
@@ -219,8 +220,9 @@ class Castle:
     def merge_cluster(self, cluster, set_of_clusters):
         print("merge Cluster Funktion")
         # set_of clusters besteht aus non_anonymized_clusters
-        #while len(cluster) < self.k:
-        while cluster.is_k_anonymous(self.k) == False:
+        #while len(cluster) < self.k or len(cluster.group_tuples_by_pid()) < self.k:
+        is_cluster_k_ano = cluster.is_k_anonymous(self.k)
+        while not is_cluster_k_ano:
             min_enlargement = float('inf')
 
             for c in set_of_clusters:
@@ -233,7 +235,6 @@ class Castle:
                 if enlargement < min_enlargement:
                     min_enlargement = enlargement
                     min_enlargement_cluster = c
-
             # fügt die Tupel des min_enlargement_cluster zu cluster hinzu
             for tupel in min_enlargement_cluster.data:
                 cluster.add_tupel(tupel)
@@ -242,10 +243,17 @@ class Castle:
                 if i.check_cluster_if_equal(min_enlargement_cluster):
                     self.not_anonymized_clusters.remove(i)
                     break
+
+            for i in set_of_clusters:
+                if i.check_cluster_if_equal(min_enlargement_cluster):
+                    set_of_clusters.remove(i)
+                    break
+            is_cluster_k_ano = cluster.is_k_anonymous(self.k)
+
         return cluster
 
     def best_selection(self, tuple)-> Cluster:
-        #print("best selection Funktion")
+        print("best selection Funktion")
         enlargements = set()
         if not self.not_anonymized_clusters:
             return None
