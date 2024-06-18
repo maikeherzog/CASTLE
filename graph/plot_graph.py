@@ -3,13 +3,34 @@ matplotlib.use('TkAgg') # or 'Qt5Agg'
 import matplotlib.pyplot as plt
 
 
-def plot_graph(x_values, y_values):
+def plot_graph_ILoss_QI(x_values, y_values, name):
     plt.figure(figsize=(10,8))
     plt.plot(x_values, y_values)
+    plt.title('Durchschnittlicher Informationsverlust zu Anzahl von QI')
+    plt.xlabel('QI')
+    plt.ylabel('Durchschnittlicher Informationsverlust')
+    plt.grid(True)
+    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/3_312_2__10000__/{name}.png')
+    print("gespeichert")
+
+def plot_graph(name, plot_data):
+    plt.figure(figsize=(10, 8))
+    for label, (x_values, y_values) in plot_data.items():
+        plt.plot(x_values, y_values, label=label)
     plt.title('Durchschnittlicher Informationsverlust zu Anzahl anonymisierter Cluster')
     plt.xlabel('Anzahl anonymisierter Cluster')
     plt.ylabel('Durchschnittlicher Informationsverlust')
     plt.grid(True)
-    plt.savefig('C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/InfoLoss_Cluster_5000_100_1000_50.png') # Speichern Sie das Diagramm als 'output.png'
+    plt.legend()  # Fügt eine Legene hinzu
+    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/3_312_2__10000__/{name}.png')
     print("gespeichert")
 
+def plot_graph_ILoss_k(x_values, y_values, name):
+    plt.figure(figsize=(10,8))
+    plt.plot(x_values, y_values)
+    plt.title('Durchschnittlicher Informationsverlust zu Anzahl k')
+    plt.xlabel('k')
+    plt.ylabel('Durchschnittlicher Informationsverlust')
+    plt.grid(True)
+    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/3_312_2__10000__/{name}.png')
+    print("gespeichert")

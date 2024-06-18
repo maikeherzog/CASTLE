@@ -68,6 +68,9 @@ class Castle:
         #if len(cluster_of_tuple_prime) >= self.k:
         if cluster_of_tuple_prime.is_k_anonymous(self.k):
             self.output_cluster(cluster_of_tuple_prime)
+        elif self.get_num_of_all_pids() < self.k:
+            self.suppress_tuple(tuple_prime)
+            return
         else:
             KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
             # prüfen ob KC_set nicht leer ist
@@ -104,6 +107,13 @@ class Castle:
         print("Suppress Tuple", tuple.qi)
         self.stream.remove(tuple)
         self.pos_stream -= 1
+
+    def get_num_of_all_pids(self):
+        pids = set()
+        for cluster in self.not_anonymized_clusters:
+            for tupel in cluster.data:
+                pids.add(tupel.pid)
+        return len(pids)
 
     def output_anonymized_cluster(self, cluster):
         output_tuples = cluster.output_tuples()

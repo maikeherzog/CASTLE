@@ -65,6 +65,46 @@ def edit_data(path_from, path_to):
 
     print(f"Clean-up completed and the data was written to a new file with the path {path_to}.")
 
+def edit_data_sorted(path_from, path_to):
+    # Spalten in der gewünschten Reihenfolge
+    header = "pid, time, age, fnlwgt, education-num, capital-gain, capital-loss, hours-per-week, workclass, education, marital-status, occupation, relationship, race, sex, native-country, income"
+    header_list = [x.strip() for x in header.split(",")]
+
+    # Open the .data file for reading
+    with open(path_from, 'r') as f:
+        lines = f.readlines()
+
+    # Create a new list for the edited lines
+    cleaned_lines = []
+
+    for line in lines:
+        # Check for '?' in the line
+        if '?' not in line and line.strip():
+            line_data_dict = dict(zip(header_list, [x.strip() for x in line.split(",")]))
+
+            # Zusammenstellen der Daten in der gewünschten Reihenfolge
+            reordered_data = [line_data_dict[column_name] for column_name in header_list]
+
+            # Umwandeln der Liste in einen String und Hinzufügen zur Ausgabeliste
+            cleaned_line = ",".join(reordered_data)
+            cleaned_lines.append(cleaned_line)
+
+    # add pid and time
+    numbered_lines = []
+    for i, line in enumerate(cleaned_lines, start=1):
+        numbered_line = f"{i}, {i}, " + line
+        numbered_lines.append(numbered_line)
+
+    # add header and cleaned lines
+    cleaned_data = [header] + numbered_lines
+
+    # Write the cleaned data to a new file
+    with open(path_to, 'w') as f:
+        for line in cleaned_data:
+            f.write(line + '\n')
+
+    print(f"Clean-up completed and the data was written to a new file with the path {path_to}.")
+
 def process_tuple(tuple_data, attribute_properties):
     processed_tuple = []
     print(enumerate(tuple_data))
