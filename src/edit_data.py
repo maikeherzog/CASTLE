@@ -23,7 +23,7 @@ attribute_properties = {
     },
     "easy_data":{
         0: {'name': 'age', 'type': 'continuous', 'interval': (18, 120)},
-        1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_test}
+        1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_easy}
     }
 
 }

@@ -12,12 +12,12 @@ print("hello world")
 
 
 # Pfad zur CSV-Datei
-csv_datei_pfad = '../data/adult.csv'
+csv_datei_pfad = 'data/adult.csv'
 #csv_datei_pfad = '../data/easy_data.csv'
 #csv_datei_pfad = '../data/easy_data_double.csv'
 
 # Anzahl der Zeilen, die eingelesen werden sollen
-anzahl_zeilen = 10000
+anzahl_zeilen = 32000
 
 # CSV-Datei mit pandas einlesen, nur die ersten 5 Zeilen
 df = pd.read_csv(csv_datei_pfad, nrows=anzahl_zeilen)
@@ -57,7 +57,7 @@ print(data_tuples)
 
 #print(castle.castle_algo(data.data))
 
-# Plots für QI zu ILoss
+"""# Plots für QI zu ILoss
 plot_data_ILoss_QI= {}
 
 #Plot 1
@@ -101,9 +101,9 @@ y_values4 = [sum(castle4.anonymized_clusters_InfoLoss[:i])/i for i in x_values4]
 plot_data_ILoss_QI["14_QI"] = x_values4, y_values4
 #plot_graph(x_values4, y_values4, "InfoLoss_Cluster_14_QI_10000_100_1000_50")
 
-plot_graph("InfoLoss_Cluster_num_Cluster_1000_31_3125_16__1000__", plot_data_ILoss_QI)
+plot_graph("InfoLoss_Cluster_num_Cluster_1000_31_3125_16__1000__", plot_data_ILoss_QI)"""
 
-# Plots für k zu ILoss
+"""# Plots für k zu ILoss
 data = Data(data_tuples, [2,16], [])
 x_values = range(2, 100, 10)
 y_values = []
@@ -114,19 +114,97 @@ for k in x_values:
     y_values.append(castle.average_Loss())
     print(f"K: {k}, ILoss: {y_values}")
 
-plot_graph_ILoss_k(x_values, y_values, "InfoLoss_Cluster_K_1-100_3125_16__1000__")
+plot_graph_ILoss_k(x_values, y_values, "InfoLoss_Cluster_K_1-100_312_2__1000__")"""
 
-# Plots für QI zu ILoss
+"""# Plots für QI zu ILoss
 
 x_values = range(2, 10, 1)
 y_values = []
 for n in x_values:
     data = Data(data_tuples, [2, n + 2], [])
-    castle = Castle(data.data, 31, 3125, 16, "adult")
+    castle = Castle(data.data, 3, 312, 2, "adult")
     castle.castle_algo(data.data)
     print("len anonymized clusters", len(castle.anonymized_clusters_InfoLoss))
     y_values.append(castle.average_Loss())
     print(f"K: {n}, ILoss: {y_values}")
 
-plot_graph_ILoss_QI(x_values, y_values, "InfoLoss_Cluster_QI_2-10_31_3125_16__1000__")
+plot_graph_ILoss_QI(x_values, y_values, "InfoLoss_Cluster_QI_2-10_3_312_2__1000__")"""
 
+# original für IL und k
+data = Data(data_tuples, [2, 16], [])
+"""
+castle = Castle(data.data, 20, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 40, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 60, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 80, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 100, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 120, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 140, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+"""
+castle = Castle(data.data, 150, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+"""castle = Castle(data.data, 180, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())"""
+
+castle = Castle(data.data, 200, 10000, 50, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+"""
+data = Data(data_tuples, [2, 16], [])
+
+castle = Castle(data.data, 5, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 10, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 20, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 30, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 40, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 50, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+
+castle = Castle(data.data, 60, 3316, 17, "adult")
+castle.castle_algo(data.data)
+print("Average InfoLoss: ", castle.average_Loss())
+"""
+
+
+#plot_graph_ILoss_k([2,3,4,5,6,7,8,9,10], [0.21407179310471494, 0.28115511138381305, 0.27798231955351405, 0.2897912486438855, 0.3542408444025129, 0.3662441030354796, 0.383069064263756, 0.3594858862882107, 0.4719898992050222], 'InfoLoss_Cluster_QI_2-10_3_312_2__1000__neu')
+#plot_graph_ILoss_k([5,10,20,30,40,50,60], [0.2959409214230391, 0.44510246587294616, 0.5614279403758493, 0.5236612703312591, 0.5716889908209324, 0.6156253646781726, 0.6515944861442672], 'InfoLoss_Cluster_QI_2-10_3316_17__10000__neu')

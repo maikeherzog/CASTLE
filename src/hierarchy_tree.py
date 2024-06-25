@@ -200,7 +200,8 @@ native_country_tree = {
                         {'name': 'Portugal'},
                         {'name': 'Ireland'},
                         {'name': 'Scotland'},
-                        {'name': 'Netherlands'}
+                        {'name': 'Netherlands'},
+                        {'name': 'Holand-Netherlands'}
                     ]
                 },
                 {
@@ -326,7 +327,7 @@ occupation_tree = {
     ]
 }
 
-education_tree_test = {
+education_tree_easy = {
     'name': 'Any Education',
     'children': [
         {

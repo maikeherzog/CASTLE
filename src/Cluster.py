@@ -165,7 +165,7 @@ class Cluster:
       return generalized_tupels
 
   def set_qi_generalized(self, qi):
-    print("QI:", qi)
+    #print("QI:", qi)
     qi = list(qi)
     for pos in range(len(qi)):
       if attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
