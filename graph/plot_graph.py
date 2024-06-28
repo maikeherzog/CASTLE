@@ -10,7 +10,7 @@ def plot_graph_ILoss_QI(x_values, y_values, name):
     plt.xlabel('QI')
     plt.ylabel('Durchschnittlicher Informationsverlust')
     plt.grid(True)
-    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/3_312_2__1000__/{name}.png')
+    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/qi_100_10000_50__32000__adult/{name}.png')
     print("gespeichert")
 
 def plot_graph(name, plot_data):
@@ -32,5 +32,5 @@ def plot_graph_ILoss_k(x_values, y_values, name):
     plt.xlabel('k')
     plt.ylabel('Durchschnittlicher Informationsverlust')
     plt.grid(True)
-    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/k_3316_17__10000__/{name}.png')
+    plt.savefig(f'C:/Users/maike/Documents/TU Dresden/Bachelorarbeit/CASTLE/Diagrams/k_10000_50__32000__/{name}.png')
     print("gespeichert")
