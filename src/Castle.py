@@ -38,7 +38,7 @@ class Castle:
         self.pos_stream = pos_stream
 
     def castle_algo(self, S):
-        logger.info(f'Starte Castle Algorithmus mit k={self.k}, delta={self.delta}, beta={self.beta}, name_dataset={self.name_dataset}')
+        logger.info(f'Starte Castle Algorithmus mit k={self.k}, delta={self.delta}, beta={self.beta}, name_dataset={self.name_dataset}, len_qi={len(S[0].qi)}, example_qi = {S[0].qi}')
         while self.stream and self.pos_stream < len(self.stream):
             print("pos_stream", self.pos_stream)
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
