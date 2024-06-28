@@ -3,6 +3,7 @@ import unittest
 
 from src.Castle import Castle
 from src.Cluster import Cluster
+from src.Data import Data
 from src.Tupel import Tuple
 
 
@@ -50,7 +51,7 @@ class TestMergeCluster(unittest.TestCase):
 
 class TestSplitMethods(unittest.TestCase):
     def setUp(self):
-        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2, 'easy_data')
 
 
     def test_initialize_heap(self):
@@ -65,6 +66,40 @@ class TestSplitMethods(unittest.TestCase):
         # Jeder Knoten sollte eine "unendliche" Distanz haben, die sich durch float('inf') darstellen lässt
         for (index,distanze) in H:
             self.assertEqual((index, distanze),(index, -1 * float('inf')))
+
+    def test_split_cluster(self):
+        tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (4, 3, 30, 'Ph.D.'), (5, 4, 24, 'Ph.D.'), (6, 5, 17, 'Bachelors'), (8, 7, 20, 'Bachelors')]
+        data = Data(tupel_liste, [2, 4], [])
+        castle = Castle(data.data, 3, 4, 3, 'easy_data')
+        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 3, (30, 'Ph.D'), ()))
+        cluster.add_tupel(Tuple(5, 4, (24, 'Ph.D'), ()))
+        cluster.add_tupel(Tuple(6, 5, (17, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(8, 7, (20, 'Bachelors'), ()))
+        castle.not_anonymized_clusters = {cluster}
+        result = castle.split_2(cluster)
+
+        self.assertEqual(len(result), 2)
+
+    def test_split_cluster(self):
+        tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (4, 1, 18, 'Bachelors'), (5, 4, 24, 'Ph.D.'),
+                       (6, 5, 17, 'Bachelors'), (8, 2, 20, 'Masters')]
+        data = Data(tupel_liste, [2, 4], [])
+        castle = Castle(data.data, 3, 4, 3, 'easy_data')
+        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 1, (18, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 4, (24, 'Ph.D'), ()))
+        cluster.add_tupel(Tuple(6, 5, (17, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(8, 2, (20, 'Masters'), ()))
+
+        castle.not_anonymized_clusters = {cluster}
+        result = castle.split_2(cluster)
+
+        self.assertEqual(len(result), 2)
 
 class TestEnlargement(unittest.TestCase):
     def setUp(self):

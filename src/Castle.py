@@ -12,7 +12,7 @@ from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
-logging.basicConfig(filename='castle_algo__32000__k_150_200.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo__32000__k_10_25_75.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -203,6 +203,38 @@ class Castle:
             keys_to_remove.append(bucket)
         for key in keys_to_remove:
             del BS[key]
+        return split_cluster
+
+    def split_2(self, cluster):
+        split_cluster = set()
+        BS = cluster.group_tuples_by_pid()
+        while len(BS) >= self.k:
+            selected_bucket = random.choice(list(BS.keys()))
+            selected_tuple = random.choice(BS[selected_bucket])
+            new_cluster = Cluster(selected_tuple, self.name_dataset)
+
+            # Lösche das ausgewählte Tupel aus BS
+            BS[selected_bucket].remove(selected_tuple)
+            if not BS[selected_bucket]:
+                del BS[selected_bucket]
+
+            heap = []
+            for bucket in [b for b in BS if b != selected_bucket]:
+                tuple_from_bucket = random.choice(BS[bucket])
+                t_dist = self.calculate_tuple_distance(tuple_from_bucket, selected_tuple)
+                heapq.heappush(heap, (t_dist, random.random(), tuple_from_bucket))
+                while len(heap) > self.k - 1:
+                    heapq.heappop(heap)
+            for _,_, heap_element in heap:
+                new_cluster.add_tupel(heap_element)
+                BS[heap_element.pid].remove(heap_element)
+                if not BS[heap_element.pid]:
+                    del BS[heap_element.pid]
+            split_cluster.add(new_cluster)
+        for tup in sum(BS.values(), []):
+            closest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, tup))
+            closest_cluster.add_tupel(tup)
+            BS[tup.pid].remove(tup)
         return split_cluster
 
     def initialize_heap(self, tuple):
