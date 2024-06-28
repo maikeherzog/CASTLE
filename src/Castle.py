@@ -12,7 +12,7 @@ from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
-logging.basicConfig(filename='castle_algo__32000__k_10_25_75.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_k_20-200_adult__32000__10000_50.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):

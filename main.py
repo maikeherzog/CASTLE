@@ -13,8 +13,8 @@ print("hello world")
 
 # Pfad zur CSV-Datei
 csv_datei_pfad = 'data/adult.csv'
-#csv_datei_pfad = '../data/easy_data.csv'
-#csv_datei_pfad = '../data/easy_data_double.csv'
+#csv_datei_pfad = 'data/easy_data.csv'
+#csv_datei_pfad = 'data/easy_data_double.csv'
 
 # Anzahl der Zeilen, die eingelesen werden sollen
 anzahl_zeilen = 32000
@@ -57,82 +57,11 @@ print(data_tuples)
 
 #print(castle.castle_algo(data.data))
 
-"""# Plots für QI zu ILoss
-plot_data_ILoss_QI= {}
 
-#Plot 1
-data1 = Data(data_tuples, [2,3], [])
-castle1 = Castle(data1.data, 31, 3125, 16, "adult")
-castle1.castle_algo(data1.data)
-x_values1 = range(1, len(castle1.anonymized_clusters_InfoLoss) + 1)
-y_values1 = [sum(castle1.anonymized_clusters_InfoLoss[:i])/i for i in x_values1]
-plot_data_ILoss_QI["1_QI"] = x_values1, y_values1
-
-#plot_graph(x_values1, y_values1, "InfoLoss_Cluster_1_QI_10000_100_1000_50")
-
-#y_values = castle.anonymized_clusters_InfoLoss
-
-#Plot 2
-data2 = Data(data_tuples, [2,8], [])
-castle2 = Castle(data2.data, 31, 3125, 16, "adult")
-castle2.castle_algo(data2.data)
-x_values2 = range(1, len(castle2.anonymized_clusters_InfoLoss) + 1)
-y_values2 = [sum(castle2.anonymized_clusters_InfoLoss[:i])/i for i in x_values2]
-plot_data_ILoss_QI["6_QI"] = x_values2, y_values2
-#plot_graph(x_values2, y_values2, "InfoLoss_Cluster_6_QI_10000_100_1000_50")
-
-
-#Plot 3
-data3 = Data(data_tuples, [2,12], [])
-castle3 = Castle(data3.data, 31, 3125, 16, "adult")
-castle3.castle_algo(data3.data)
-x_values3 = range(1, len(castle3.anonymized_clusters_InfoLoss) + 1)
-y_values3 = [sum(castle3.anonymized_clusters_InfoLoss[:i])/i for i in x_values3]
-plot_data_ILoss_QI["10_QI"] = x_values3, y_values3
-#plot_graph(x_values3, y_values3, "InfoLoss_Cluster_10_QI_10000_100_1000_50")
-
-
-#Plot 4
-data4 = Data(data_tuples, [2,16], [])
-castle4 = Castle(data4.data, 31, 3125, 16, "adult")
-castle4.castle_algo(data4.data)
-x_values4 = range(1, len(castle4.anonymized_clusters_InfoLoss) + 1)
-y_values4 = [sum(castle4.anonymized_clusters_InfoLoss[:i])/i for i in x_values4]
-plot_data_ILoss_QI["14_QI"] = x_values4, y_values4
-#plot_graph(x_values4, y_values4, "InfoLoss_Cluster_14_QI_10000_100_1000_50")
-
-plot_graph("InfoLoss_Cluster_num_Cluster_1000_31_3125_16__1000__", plot_data_ILoss_QI)"""
-
-"""# Plots für k zu ILoss
-data = Data(data_tuples, [2,16], [])
-x_values = range(2, 100, 10)
-y_values = []
-for k in x_values:
-    castle = Castle(data.data, k, 3125, 16, "adult")
-    castle.castle_algo(data.data)
-    print("len anonymized clusters", len(castle.anonymized_clusters_InfoLoss))
-    y_values.append(castle.average_Loss())
-    print(f"K: {k}, ILoss: {y_values}")
-
-plot_graph_ILoss_k(x_values, y_values, "InfoLoss_Cluster_K_1-100_312_2__1000__")"""
-
-"""# Plots für QI zu ILoss
-
-x_values = range(2, 10, 1)
-y_values = []
-for n in x_values:
-    data = Data(data_tuples, [2, n + 2], [])
-    castle = Castle(data.data, 3, 312, 2, "adult")
-    castle.castle_algo(data.data)
-    print("len anonymized clusters", len(castle.anonymized_clusters_InfoLoss))
-    y_values.append(castle.average_Loss())
-    print(f"K: {n}, ILoss: {y_values}")
-
-plot_graph_ILoss_QI(x_values, y_values, "InfoLoss_Cluster_QI_2-10_3_312_2__1000__")"""
 
 # original für IL und k
 data = Data(data_tuples, [2, 16], [])
-"""
+
 castle = Castle(data.data, 20, 10000, 50, "adult")
 castle.castle_algo(data.data)
 print("Average InfoLoss: ", castle.average_Loss())
@@ -160,14 +89,14 @@ print("Average InfoLoss: ", castle.average_Loss())
 castle = Castle(data.data, 140, 10000, 50, "adult")
 castle.castle_algo(data.data)
 print("Average InfoLoss: ", castle.average_Loss())
-"""
-castle = Castle(data.data, 150, 10000, 50, "adult")
+
+castle = Castle(data.data, 160, 10000, 50, "adult")
 castle.castle_algo(data.data)
 print("Average InfoLoss: ", castle.average_Loss())
 
-"""castle = Castle(data.data, 180, 10000, 50, "adult")
+castle = Castle(data.data, 180, 10000, 50, "adult")
 castle.castle_algo(data.data)
-print("Average InfoLoss: ", castle.average_Loss())"""
+print("Average InfoLoss: ", castle.average_Loss())
 
 castle = Castle(data.data, 200, 10000, 50, "adult")
 castle.castle_algo(data.data)
@@ -208,3 +137,5 @@ print("Average InfoLoss: ", castle.average_Loss())
 
 #plot_graph_ILoss_k([2,3,4,5,6,7,8,9,10], [0.21407179310471494, 0.28115511138381305, 0.27798231955351405, 0.2897912486438855, 0.3542408444025129, 0.3662441030354796, 0.383069064263756, 0.3594858862882107, 0.4719898992050222], 'InfoLoss_Cluster_QI_2-10_3_312_2__1000__neu')
 #plot_graph_ILoss_k([5,10,20,30,40,50,60], [0.2959409214230391, 0.44510246587294616, 0.5614279403758493, 0.5236612703312591, 0.5716889908209324, 0.6156253646781726, 0.6515944861442672], 'InfoLoss_Cluster_QI_2-10_3316_17__10000__neu')
+#plot_graph_ILoss_k([10, 25, 50, 75, 100, 125, 150, 175, 200, 225], [0.41444599657390613, 0.5181606848631809, 0.6030626756404411, 0.6327106052030486, 0.6862595359430634, 0.6831731826904892, 0.7029661998202513, 0.7201581698541878, 0.7174547299096078, 0.7234883877717487], 'InfoLoss_Cluster_k_50-225_10000_50__32000__')
+#plot_graph_ILoss_QI([2,4,6,8,10,12], [0.17502051638154154, 0.45453992687558753, 0.7575677414294303, 0.741961010887795, 0.7668720151473093,0.715101956076992], 'InfoLoss_Cluster_QI_2-10_100_10000_50__32000__adult')
