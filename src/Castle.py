@@ -66,7 +66,7 @@ class Castle:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
-        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()}, Liste des Informationloss: {self.anonymized_clusters_InfoLoss}')
+        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
     def delay_constraint(self, tuple_prime):
         #print('delay_constraint')
@@ -149,7 +149,7 @@ class Castle:
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()} Liste des Informationloss: {self.anonymized_clusters_InfoLoss}')
+                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
             else:
                 continue
@@ -484,5 +484,10 @@ class Castle:
             else:
                 str_diff += 0 if tuple1.qi[i] == tuple2.qi[i] else 1
         return math.sqrt(num_diff ** 2 + str_diff ** 2) * (-1)
+
+    def get_recent_InfoLoss(self):
+        start_index = max(0, len(self.anonymized_clusters_InfoLoss) - self.mu)
+        recent_info_loss = self.anonymized_clusters_InfoLoss[start_index:]
+        return recent_info_loss
 
 
