@@ -27,6 +27,7 @@ class Castle:
         self.anonymized_clusters_InfoLoss = []
         self.output = []
         self.name_dataset = name_dataset
+        self.mu = 100
 
     def set_anonymized_clusters(self, anonymized_clusters):
         self.anonymized_clusters = anonymized_clusters
@@ -471,7 +472,10 @@ class Castle:
         if len(self.anonymized_clusters_InfoLoss) == 0:
             return 0
         else:
-            return (1/len(self.anonymized_clusters_InfoLoss)) * sum(self.anonymized_clusters_InfoLoss)
+            start_index = max(0, len(self.anonymized_clusters_InfoLoss) - self.mu)
+            recent_elements = self.anonymized_clusters_InfoLoss[start_index:]
+
+            return (1 / len(recent_elements)) * sum(recent_elements)
 
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
         num_diff = 0

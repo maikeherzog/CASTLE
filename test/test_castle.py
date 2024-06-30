@@ -10,7 +10,7 @@ from src.Tupel import Tuple
 class TestMergeCluster(unittest.TestCase):
 
     def setUp(self):
-        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2, 'easy_data')
 
 
     def test_merge_cluster(self):
