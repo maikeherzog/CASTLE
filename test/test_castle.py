@@ -84,7 +84,7 @@ class TestSplitMethods(unittest.TestCase):
         self.assertEqual(len(result), 2)
 
     def test_split_cluster(self):
-        tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (4, 1, 18, 'Bachelors'), (5, 4, 24, 'Ph.D.'),
+        tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (3, 1, 18, 'Bachelors'), (5, 4, 24, 'Ph.D.'),
                        (6, 5, 17, 'Bachelors'), (8, 2, 20, 'Masters')]
         data = Data(tupel_liste, [2, 4], [])
         castle = Castle(data.data, 3, 4, 3, 'easy_data')
@@ -133,6 +133,34 @@ class TestEnlargement(unittest.TestCase):
         cluster3 = Cluster(tuple3)
         castle.not_anonymized_clusters = {cluster1, cluster2, cluster3}
         castle.delay_constraint(tuple1)
+
+class TestIloss(unittest.TestCase):
+    def test_Iloss_cluster(self):
+        castle = Castle({(1, 0, 18, 'Bachelors'), (2, 1, 24, 'Bachelors'), (3, 2, 23, 'Masters')}, 5, 5, 2, 'easy_data')
+        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 1, (18, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 4, (24, 'Ph.D'), ()))
+        cluster.add_tupel(Tuple(6, 5, (17, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(8, 2, (20, 'Masters'), ()))
+
+        iloss = castle.InfoLoss(cluster.t)
+        self.assertEqual(iloss, 0.28431372549019607)
+
+        cluster_2 = Cluster(Tuple(8, 2, (20, 'Masters'), ()), 'easy_data')
+        cluster_2.add_tupel(Tuple(6, 5, (17, 'Bachelors'), ()))
+        cluster_2.add_tupel(Tuple(4, 1, (18, 'Bachelors'), ()))
+
+        iloss_2 = castle.InfoLoss(cluster_2.t)
+        self.assertEqual(iloss_2, 0.13970588235294118)
+
+        cluster_3 = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+        cluster_3.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster_3.add_tupel(Tuple(5, 4, (24, 'Ph.D'), ()))
+
+        iloss_3 = castle.InfoLoss(cluster_3.t)
+        self.assertEqual(iloss_3, 0.27941176470588236)
 
 # Ausführen der Test-Suite
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree
 
 
-logging.basicConfig(filename='castle_algo_ILoss_k_20-200_adult__32000__10000_50.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_k_20_adult-castle__32000__10000_50.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -146,7 +146,9 @@ class Castle:
             if self.InfoLoss(cluster.t) >= self.tao:
                 self.anonymized_clusters.add(cluster)
                 Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
-                self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
+                for _ in range(len(cluster.data)):
+                    self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
+                #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
                 logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()} Liste des Informationloss: {self.anonymized_clusters_InfoLoss}')
 
             else:
@@ -358,11 +360,11 @@ class Castle:
 
         return 1 / n * sum_iloss_enlarged_cluster - 1 / n * sum_iloss_cluster
 
-    def InfoLoss(self, tupel):
-        n = len(tupel)
+    def InfoLoss(self, cluster):
+        n = len(cluster)
         sum = 0
         for att_pos in range(n):
-            sum += self.VInfoLoss_cluster(tupel[att_pos], att_pos)
+            sum += self.VInfoLoss_cluster(cluster[att_pos], att_pos)
         return 1 / n * sum
 
     def InfoLoss_tupel(self, tupel):
