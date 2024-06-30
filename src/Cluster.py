@@ -164,6 +164,12 @@ class Cluster:
         generalized_tupels.append(copied_tuple)
       return generalized_tupels
 
+  def output_single_tuple(self, tuple):
+    copied_tuple = copy.copy(tuple)
+    qi_generalized = self.set_qi_generalized(self.t)
+    copied_tuple.set_qi(qi_generalized)
+    return copied_tuple
+
   def set_qi_generalized(self, qi):
     #print("QI:", qi)
     qi = list(qi)

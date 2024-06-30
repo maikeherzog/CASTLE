@@ -162,6 +162,28 @@ class TestIloss(unittest.TestCase):
         iloss_3 = castle.InfoLoss(cluster_3.t)
         self.assertEqual(iloss_3, 0.27941176470588236)
 
+class TestOutput(unittest.TestCase):
+
+    def setUp(self):
+        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2, 'easy_data')
+
+    def test_output_anonymized_cluster(self):
+        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+
+        self.castle.output_anonymized_cluster(cluster, Tuple(1, 1, (19, 'Bachelors'), ()))
+        self.assertEqual(self.castle.anonymized_clusters_InfoLoss, [0.00980392156862745])
+
+    def test_output_cluster(self):
+        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 1, (19, 'Bachelors'), ()))
+
+        self.castle.set_not_anonymized_clusters({cluster})
+
+        self.castle.output_cluster(cluster)
+        self.assertEqual(self.castle.anonymized_clusters_InfoLoss, [0.00980392156862745, 0.00980392156862745, 0.00980392156862745])
+
 # Ausführen der Test-Suite
 if __name__ == "__main__":
     unittest.main()

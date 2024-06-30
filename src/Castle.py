@@ -110,7 +110,6 @@ class Castle:
 
 
     def suppress_tuple(self, tuple):
-        # TODO: nochmal prüfen
         #print("Suppress Tuple", tuple.qi)
         self.stream.remove(tuple)
         self.pos_stream -= 1
@@ -122,38 +121,37 @@ class Castle:
                 pids.add(tupel.pid)
         return len(pids)
 
-    def output_anonymized_cluster(self, cluster):
-        output_tuples = cluster.output_tuples()
-        self.output.extend(cluster.data)
-        #for tuple in output_tuples:
-            #print("Output_:", tuple.qi)
+    def output_anonymized_cluster(self, cluster, tuple):
+        output = cluster.output_single_tuple(tuple)
+        self.output.append(tuple)
+        self.anonymized_clusters_InfoLoss.append(self.InfoLoss(output.qi))
 
     def output_cluster(self, cluster):
         #print("Output Cluster Funktion")
-        if len(cluster) >= 2 * self.k: #Todo: hier auch schauen, ob mehr als 2*k pid's
+        if len(cluster) >= 2 * self.k  and len(self.group_tuples_by_pid()) >= 2*self.k:
             split_cluster = self.split(cluster)
-            self.not_anonymized_clusters.remove(cluster) #Todo: kann das weg?
+            self.not_anonymized_clusters.remove(cluster)
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
         else:
             split_cluster = {cluster}
-        for cluster in split_cluster:
-            output_tuples = cluster.output_tuples()
-            self.output.extend(cluster.data)
+        for c in split_cluster:
+            output_tuples = c.output_tuples()
+            self.output.extend(c.data)
 
-            #for tuple in output_tuples:
-                #print("_Output:", tuple.qi)
+            for tuple in output_tuples:
+                self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
+
             self.tao = self.average_Loss()
             if self.InfoLoss(cluster.t) >= self.tao:
                 self.anonymized_clusters.add(cluster)
                 Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
-                for _ in range(len(cluster.data)):
-                    self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
+                """for _ in range(len(cluster.data)):
+                    self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
                 logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()} Liste des Informationloss: {self.anonymized_clusters_InfoLoss}')
 
             else:
-                # TODO: stimmt das hier so, dass das da entfern werden soll?
                 continue
         self.not_anonymized_clusters.remove(cluster)
 
