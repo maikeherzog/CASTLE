@@ -166,6 +166,8 @@ class TestOutput(unittest.TestCase):
 
     def setUp(self):
         self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2, 'easy_data')
+        self.castle2 = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 2, 5, 2, 'easy_data')
+
 
     def test_output_anonymized_cluster(self):
         cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
@@ -178,11 +180,12 @@ class TestOutput(unittest.TestCase):
         cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
         cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
         cluster.add_tupel(Tuple(4, 1, (19, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 2, (19, 'Bachelors'), ()))
 
-        self.castle.set_not_anonymized_clusters({cluster})
+        self.castle2.set_not_anonymized_clusters({cluster})
 
-        self.castle.output_cluster(cluster)
-        self.assertEqual(self.castle.anonymized_clusters_InfoLoss, [0.00980392156862745, 0.00980392156862745, 0.00980392156862745])
+        self.castle2.output_cluster(cluster)
+        self.assertEqual(self.castle2.anonymized_clusters_InfoLoss, [0.00980392156862745, 0.00980392156862745, 0.00980392156862745, 0.00980392156862745])
 
 # Ausführen der Test-Suite
 if __name__ == "__main__":
