@@ -128,9 +128,10 @@ class Castle:
 
     def output_cluster(self, cluster):
         #print("Output Cluster Funktion")
-        if len(cluster) >= 2 * self.k  and len(cluster.group_tuples_by_pid()) >= 2*self.k:
+        num_pids = len(cluster.group_tuples_by_pid())
+        if len(cluster) >= 2 * self.k  and num_pids >= 2*self.k:
             split_cluster = self.split(cluster)
-            self.not_anonymized_clusters.remove(cluster)
+            #self.not_anonymized_clusters.remove(cluster)
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
         else:
@@ -155,7 +156,7 @@ class Castle:
                 continue
         self.not_anonymized_clusters.remove(cluster)
 
-    def split(self, cluster):
+    def split_alt(self, cluster):
         #print("Split Function")
         split_cluster = set()
         BS = cluster.group_tuples_by_pid()
@@ -206,7 +207,7 @@ class Castle:
             del BS[key]
         return split_cluster
 
-    def split_2(self, cluster):
+    def split(self, cluster):
         split_cluster = set()
         BS = cluster.group_tuples_by_pid()
         while len(BS) >= self.k:

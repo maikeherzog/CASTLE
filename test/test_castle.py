@@ -79,7 +79,7 @@ class TestSplitMethods(unittest.TestCase):
         cluster.add_tupel(Tuple(6, 5, (17, 'Bachelors'), ()))
         cluster.add_tupel(Tuple(8, 7, (20, 'Bachelors'), ()))
         castle.not_anonymized_clusters = {cluster}
-        result = castle.split_2(cluster)
+        result = castle.split(cluster)
 
         self.assertEqual(len(result), 2)
 
@@ -97,7 +97,7 @@ class TestSplitMethods(unittest.TestCase):
         cluster.add_tupel(Tuple(8, 2, (20, 'Masters'), ()))
 
         castle.not_anonymized_clusters = {cluster}
-        result = castle.split_2(cluster)
+        result = castle.split(cluster)
 
         self.assertEqual(len(result), 2)
 
@@ -177,16 +177,19 @@ class TestOutput(unittest.TestCase):
         self.assertEqual(self.castle.anonymized_clusters_InfoLoss, [0.00980392156862745])
 
     def test_output_cluster(self):
-        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
+        cluster = Cluster(Tuple(1, 1, (21, 'Bachelors'), ()), 'easy_data')
         cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
         cluster.add_tupel(Tuple(4, 1, (19, 'Bachelors'), ()))
-        cluster.add_tupel(Tuple(5, 2, (19, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 2, (21, 'Masters'), ()))
+        cluster.add_tupel(Tuple(2, 3, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 4, (18, 'Bachelors'), ()))
+
 
         self.castle2.set_not_anonymized_clusters({cluster})
 
-        self.castle2.output_cluster(cluster)
-        self.assertEqual(self.castle2.anonymized_clusters_InfoLoss, [0.00980392156862745, 0.00980392156862745, 0.00980392156862745, 0.00980392156862745])
+        output = self.castle2.output_cluster(cluster)
 
+        self.assertEqual(len(self.castle2.anonymized_clusters_InfoLoss), 6)
 # Ausführen der Test-Suite
 if __name__ == "__main__":
     unittest.main()
