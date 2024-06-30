@@ -83,7 +83,7 @@ class Castle:
             # prüfen ob KC_set nicht leer ist
             if KC_set:
                 KC = random.choice(list(KC_set))
-                self.output_anonymized_cluster(KC)
+                self.output_anonymized_cluster(KC, tuple_prime)
                 return
             m = 0
             for cluster in self.not_anonymized_clusters:
