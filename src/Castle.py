@@ -130,7 +130,7 @@ class Castle:
         #print("Output Cluster Funktion")
         if len(cluster) >= 2 * self.k  and len(cluster.group_tuples_by_pid()) >= 2*self.k:
             split_cluster = self.split(cluster)
-            #self.not_anonymized_clusters.remove(cluster)
+            self.not_anonymized_clusters.remove(cluster)
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
         else:
