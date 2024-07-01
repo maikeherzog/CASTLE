@@ -66,7 +66,7 @@ class Castle:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
-        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
+        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
     def delay_constraint(self, tuple_prime):
         #print('delay_constraint')
@@ -150,7 +150,7 @@ class Castle:
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Durchschnittlicher ILoss: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
+                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
             else:
                 continue
@@ -476,6 +476,12 @@ class Castle:
 
             return (1 / len(recent_elements)) * sum(recent_elements)
 
+
+    def average_Loss_all(self):
+        if len(self.anonymized_clusters_InfoLoss) == 0:
+            return 0
+        else:
+            return (1/len(self.anonymized_clusters_InfoLoss)) * sum(self.anonymized_clusters_InfoLoss)
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
         num_diff = 0
         str_diff = 0
