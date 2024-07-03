@@ -61,6 +61,40 @@ attribute_properties = {
         13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
         14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
     },
+    "adult_castle_reverse":{
+        0: {'name': 'native-country', 'type': 'cathegorical', 'hierarchy_tree': native_country_tree},
+        1: {'name': 'occupation', 'type': 'cathegorical', 'hierarchy_tree': occupation_tree},
+        2: {'name': 'marital-status', 'type': 'cathegorical', 'hierarchy_tree': marital_status_tree},
+        3: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree},
+        4: {'name': 'hours-per-week', 'type': 'continuous', 'interval': (1, 99)},
+        5: {'name': 'capital-loss', 'type': 'continuous', 'interval': (0, 4356)},
+        6: {'name': 'capital-gain', 'type': 'continuous', 'interval': (0, 99999)},
+        7: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
+        8: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
+        9: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
+        10: {'name': 'workclass', 'type': 'cathegorical', 'hierarchy_tree': workclass_tree},
+        11: {'name': 'relationship', 'type': 'cathegorical', 'hierarchy_tree': relationship_tree},
+        12: {'name': 'race', 'type': 'cathegorical', 'hierarchy_tree': race_tree},
+        13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
+        14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
+    },
+    "adult_castle_mix":{
+        0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
+        1: {'name': 'native-country', 'type': 'cathegorical', 'hierarchy_tree': native_country_tree},
+        2: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
+        3: {'name': 'occupation', 'type': 'cathegorical', 'hierarchy_tree': occupation_tree},
+        4: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
+        5: {'name': 'marital-status', 'type': 'cathegorical', 'hierarchy_tree': marital_status_tree},
+        6: {'name': 'capital-gain', 'type': 'continuous', 'interval': (0, 99999)},
+        7: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree},
+        8: {'name': 'capital-loss', 'type': 'continuous', 'interval': (0, 4356)},
+        9: {'name': 'hours-per-week', 'type': 'continuous', 'interval': (1, 99)},
+        10: {'name': 'workclass', 'type': 'cathegorical', 'hierarchy_tree': workclass_tree},
+        11: {'name': 'relationship', 'type': 'cathegorical', 'hierarchy_tree': relationship_tree},
+        12: {'name': 'race', 'type': 'cathegorical', 'hierarchy_tree': race_tree},
+        13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
+        14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
+    }
 
 }
 
@@ -158,7 +192,7 @@ def process_tuple(tuple_data, attribute_properties):
 
     return processed_tuple
 
-def switch_cols(csv_datei, new_order):
+def switch_cols(csv_datei, path_for_save, new_order):
     with open(csv_datei, 'r') as file:
         daten = csv.reader(file)
         neue_daten = []
@@ -166,6 +200,6 @@ def switch_cols(csv_datei, new_order):
             neue_zeile = [zeile[i] for i in new_order]
             neue_daten.append(neue_zeile)
 
-    with open('neue_' + csv_datei, 'w', newline='') as file:
+    with open(path_for_save, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(neue_daten)
