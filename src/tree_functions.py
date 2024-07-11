@@ -27,6 +27,29 @@ def get_subtree(tree, root_name):
 
     return None
 
+
+def is_leaf_node(tree, node_name):
+    # Sucht nach dem Knoten mit dem gegebenen Namen im Baum
+    def search_node(tree, node_name):
+        if tree['name'] == node_name:
+            return tree
+        if 'children' in tree:
+            for child in tree['children']:
+                result = search_node(child, node_name)
+                if result is not None:
+                    return result
+        return None
+
+    node = search_node(tree, node_name)
+
+    if node is None:
+        return f'Knoten {node_name} nicht gefunden im Baum.'
+
+    if 'children' in node:
+        return False
+    else:
+        return True
+
 def find_generalization(tree, node_list):
     def find_path(node, target):
         if node['name'] == target:
@@ -39,7 +62,7 @@ def find_generalization(tree, node_list):
 
         return None
 
-    def find_common_ancestor(paths):
+    """def find_common_ancestor(paths):
         common_ancestor = paths[0]
         for path in paths[1:]:
             i = 0
@@ -51,4 +74,4 @@ def find_generalization(tree, node_list):
     paths = [find_path(tree, node) for node in node_list]
     common_ancestor = find_common_ancestor(paths)
 
-    return common_ancestor if common_ancestor else 'Not Found'
+    return common_ancestor if common_ancestor else 'Not Found'"""
