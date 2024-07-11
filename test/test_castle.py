@@ -5,6 +5,8 @@ from src.Castle import Castle
 from src.Cluster import Cluster
 from src.Data import Data
 from src.Tupel import Tuple
+from src.hierarchy_tree import education_tree_easy
+from src.tree_functions import find_generalization
 
 
 class TestMergeCluster(unittest.TestCase):
@@ -190,6 +192,10 @@ class TestOutput(unittest.TestCase):
         output = self.castle2.output_cluster(cluster)
 
         self.assertEqual(len(self.castle2.anonymized_clusters_InfoLoss), 6)
+
+
+
+
 # Ausführen der Test-Suite
 if __name__ == "__main__":
     unittest.main()
