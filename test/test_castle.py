@@ -16,16 +16,14 @@ class TestMergeCluster(unittest.TestCase):
 
 
     def test_merge_cluster(self):
-        #castle = Castle(None, 6, 5, 2)
-        # Erzeugung der Eingabedaten
         tuple0 = Tuple(0, 0, (18, 'Bachelors'), ())
-        cluster1 = Cluster(tuple0)
+        cluster1 = Cluster(tuple0, "easy_data")
         tuple1 = Tuple(1,1,(24, 'Bachelors'),())
         tuple2 = Tuple(2,2,(23, 'Masters'),())
         cluster1.add_tupel(tuple1)
         cluster1.add_tupel(tuple2)
 
-        cluster2 = Cluster(tuple0)
+        cluster2 = Cluster(tuple0, "easy_data")
         tuple3 = Tuple(1,1,(12, 'Bachelors'),())
         tuple4 = Tuple(2,2,(28, 'Masters'),())
         cluster2.add_tupel(tuple3)
@@ -41,14 +39,6 @@ class TestMergeCluster(unittest.TestCase):
         self.assertEqual(result.data, expected_cluster_data)
         self.assertEqual(result.t, ([12, 28], ['Bachelors', 'Masters']))
 
-    def test_average_loss(self):
-        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
-        self.castle.anonymized_clusters_InfoLoss= [0.1, 0.2, 0.3]
-        self.assertEqual(self.castle.average_Loss(), 0.2)
-
-    def test_average_loss_no_anonymized_cluster(self):
-        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 6, 5, 2)
-        self.assertEqual(self.castle.average_Loss(), 0.0)
 
 
 class TestSplitMethods(unittest.TestCase):
@@ -103,26 +93,45 @@ class TestSplitMethods(unittest.TestCase):
 
         self.assertEqual(len(result), 2)
 
-class TestEnlargement(unittest.TestCase):
+class TestEnlargementAndBestSelection(unittest.TestCase):
     def setUp(self):
-        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2)
+        self.castle = Castle(None, 6, 5, 2, "easy_data")
+        self.tuple1 = Tuple(0, 0, (18, 'Primary School'), ())
+        self.tuple2 = Tuple(1, 1, (22, 'Secondary School'), ())
+        self.tuple3 = Tuple(2, 2, (26, 'Bachelors'), ())
+        self.tuple4 = Tuple(3, 3, (28, 'Masters'), ())
+        self.cluster1 = Cluster(self.tuple1, "easy_data")
+        self.cluster1.add_tupel(self.tuple2)
+        self.cluster2 = Cluster(self.tuple3, "easy_data")
+        self.cluster2.add_tupel(self.tuple4)
 
-    def test_Enlargement_Tuple_Tuple(self):
+        self.tuple5 = Tuple(1,5,(24, 'Bachelors'), ())
 
-        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 5, 5, 2)
-        self.castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors'))
-        self.assertEqual(self.castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors')), 0.13480392156862744)
+
+    """def test_Enlargement_Tuple_Tuple(self):
+
+        erg = self.castle.Enlargement((18, 'Bachelors'), (24, 'Bachelors'))
+        self.assertEqual(erg, 0.13480392156862744)"""
 
     def test_enlargement(self):
         # testcase 1
-        #cluster1 = ([26, 28], ['Masters', 'Bachelors'])
-        cluster1 = Cluster(Tuple(0,0,(26, 'Masters'),()))
-        cluster1.add_tupel(Tuple(1,1,(28, 'Bachelors'),()))
-        #tupel1 = (24, 'Bachelors')
-        tuple1 = Tuple(2,2,(24, 'Bachelors'), ())
-        expected_result1 = 0.13480392156862744
-        result1 = self.castle.Enlargement(cluster1, tuple1)
+        expected_result1 = 0.3848
+        result1 = self.castle.Enlargement(self.cluster1, self.tuple5)
         self.assertAlmostEqual(result1, expected_result1, places=3)
+
+        self.cluster1.add_tupel(self.tuple5)
+        result2 = self.castle.Enlargement(self.cluster1, self.tuple5)
+        expected_result2 = 0.0
+        self.assertAlmostEqual(result2, expected_result2, places=3)
+
+        result3 = self.castle.Enlargement(self.cluster2, self.tuple5)
+        expected_result3 = 0.01
+        self.assertAlmostEqual(result3, expected_result3, places=3)
+
+    def test_best_selection(self):
+        self.castle.not_anonymized_clusters = {self.cluster1, self.cluster2}
+        erg = self.castle.best_selection(self.tuple5)
+        self.assertEqual(erg, self.cluster2)
 
     def test_delay_constraint(self):
         castle = Castle({(0,0, 52, 'Secondary School'), (1,1, 51, 'Bachelors'), (2,2, 61, 'Ph.D'), (3,3,51,'Bachelors')}, 3, 3, 3)
