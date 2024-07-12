@@ -62,7 +62,7 @@ def find_generalization(tree, node_list):
 
         return None
 
-    """def find_common_ancestor(paths):
+    def find_common_ancestor(paths):
         common_ancestor = paths[0]
         for path in paths[1:]:
             i = 0
@@ -74,4 +74,4 @@ def find_generalization(tree, node_list):
     paths = [find_path(tree, node) for node in node_list]
     common_ancestor = find_common_ancestor(paths)
 
-    return common_ancestor if common_ancestor else 'Not Found'"""
+    return common_ancestor if common_ancestor else 'Not Found'
