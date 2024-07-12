@@ -19,15 +19,7 @@ class Cluster:
     self.name_dataset = name_dataset
 
   def __len__(self):
-    """
-    Gibt die Anzahl der Datensätze in diesem Cluster zurück.
-    """
-
     return len(self.data)
-
-  def __str__(self):
-    return str(self.t) + ', ' + ', '.join(str(t) for t in self.data[1:])
-
 
   def make_tuple_from_qi(self, qi):
     new_tuple = Tuple(0, 0, qi, ())
@@ -177,10 +169,6 @@ class Cluster:
       if attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
         qi[pos] = find_generalization(attribute_properties[self.name_dataset][pos]['hierarchy_tree'], qi[pos])
     return tuple(qi)
-
-  def update(self, tuples):
-    for tuple in tuples:
-      self.add_tupel(tuple)
 
   def check_if_tuple_is_in_cluster(self, tuple):
     for t in self.data:

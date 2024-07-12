@@ -33,8 +33,4 @@ class Tuple:
   def set_qi(self, qi):
     self.qi = qi
 
-  """def is_equal(self, other):
-    if self.pid == other.pid & self.time == other.time & self.qi == other.qi & self.sensitive_attributes == other.sensitive_attributes:
-      return True
-    else:
-        return False"""
+
