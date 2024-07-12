@@ -12,7 +12,7 @@ from src.tree_functions import find_generalization
 class TestMergeCluster(unittest.TestCase):
 
     def setUp(self):
-        self.castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters')}, 6, 5, 2, 'easy_data')
+        self.castle = Castle(None, 6, 5, 2, 'easy_data')
 
 
     def test_merge_cluster(self):
@@ -23,18 +23,19 @@ class TestMergeCluster(unittest.TestCase):
         cluster1.add_tupel(tuple1)
         cluster1.add_tupel(tuple2)
 
-        cluster2 = Cluster(tuple0, "easy_data")
-        tuple3 = Tuple(1,1,(12, 'Bachelors'),())
-        tuple4 = Tuple(2,2,(28, 'Masters'),())
-        cluster2.add_tupel(tuple3)
+        tuple3 = Tuple(3,3,(12, 'Bachelors'),())
+        cluster2 = Cluster(tuple3, "easy_data")
+        tuple4 = Tuple(5,4,(12, 'Bachelors'),())
+        tuple5 = Tuple(6,5,(28, 'Masters'),())
         cluster2.add_tupel(tuple4)
+        cluster2.add_tupel(tuple5)
 
         not_anonymized_clusters = {cluster2}
-        self.castle.set_not_anonymized_clusters(not_anonymized_clusters)
+        self.castle.not_anonymized_clusters = not_anonymized_clusters
         # Aufrufen der zu testenden Funktion
         result = self.castle.merge_cluster(cluster1, not_anonymized_clusters)
 
-        expected_cluster_data = [tuple0, tuple1, tuple2, tuple0, tuple3, tuple4]
+        expected_cluster_data = [tuple0, tuple1, tuple2, tuple3, tuple4, tuple5]
 
         self.assertEqual(result.data, expected_cluster_data)
         self.assertEqual(result.t, ([12, 28], ['Bachelors', 'Masters']))
@@ -47,17 +48,14 @@ class TestSplitMethods(unittest.TestCase):
 
 
     def test_initialize_heap(self):
-        #castle = Castle({(0, 18, 'Bachelors'), (1, 24, 'Bachelors'), (2, 23, 'Masters') }, 5, 5, 2)
 
-        H = self.castle.initialize_heap(
-            "Dummy Tuple")  # es spielt keine Rolle, was wir hier passieren, da die Distanzen unabhängig von diesem Wert auf Unendlichkeit gesetzt werden
+        tuple = Tuple(0, 0, (18, 'Bachelors'), ())
+        H = self.castle.initialize_heap(tuple)
 
-        # Es sollte k - 1 = 4 Knoten im Heap geben
-        self.assertEqual(len(H), 4)
+        self.assertEqual(len(H), 5)
 
-        # Jeder Knoten sollte eine "unendliche" Distanz haben, die sich durch float('inf') darstellen lässt
-        for (index,distanze) in H:
-            self.assertEqual((index, distanze),(index, -1 * float('inf')))
+        for element in H:
+            self.assertEqual(element.dist, -1 * float('inf'))
 
     def test_split_cluster(self):
         tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (4, 3, 30, 'Ph.D.'), (5, 4, 24, 'Ph.D.'), (6, 5, 17, 'Bachelors'), (8, 7, 20, 'Bachelors')]
@@ -133,17 +131,7 @@ class TestEnlargementAndBestSelection(unittest.TestCase):
         erg = self.castle.best_selection(self.tuple5)
         self.assertEqual(erg, self.cluster2)
 
-    def test_delay_constraint(self):
-        castle = Castle({(0,0, 52, 'Secondary School'), (1,1, 51, 'Bachelors'), (2,2, 61, 'Ph.D'), (3,3,51,'Bachelors')}, 3, 3, 3)
-        tuple1 = Tuple(0,0, 52, 'Secondary School')
-        tuple2 = Tuple(1,1, 51, 'Bachelors')
-        tuple3 = Tuple(2,2, 61, 'Ph.D')
-        tuple4 = Tuple(3,3, 51, 'Bachelors')
-        cluster1 = Cluster(tuple1)
-        cluster2 = Cluster(tuple2)
-        cluster3 = Cluster(tuple3)
-        castle.not_anonymized_clusters = {cluster1, cluster2, cluster3}
-        castle.delay_constraint(tuple1)
+
 
 class TestIloss(unittest.TestCase):
     def test_Iloss_cluster(self):
@@ -181,11 +169,11 @@ class TestOutput(unittest.TestCase):
 
 
     def test_output_anonymized_cluster(self):
-        cluster = Cluster(Tuple(1, 1, (18, 'Bachelors'), ()), 'easy_data')
-        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster = Cluster(Tuple(1, 1, (26, 'Bachelors'), ()), 'easy_data')
+        cluster.add_tupel(Tuple(2, 2, (28, 'Masters'), ()))
 
-        self.castle.output_anonymized_cluster(cluster, Tuple(1, 1, (19, 'Bachelors'), ()))
-        self.assertEqual(self.castle.anonymized_clusters_InfoLoss, [0.00980392156862745])
+        self.castle.output_anonymized_cluster(cluster, Tuple(1, 1, (18, 'Bachelors'), ()))
+        self.assertAlmostEqual(self.castle.anonymized_clusters_InfoLoss[0], 0.2598, places=3)
 
     def test_output_cluster(self):
         cluster = Cluster(Tuple(1, 1, (21, 'Bachelors'), ()), 'easy_data')
@@ -196,11 +184,29 @@ class TestOutput(unittest.TestCase):
         cluster.add_tupel(Tuple(4, 4, (18, 'Bachelors'), ()))
 
 
-        self.castle2.set_not_anonymized_clusters({cluster})
+        self.castle2.not_anonymized_clusters = {cluster}
 
         output = self.castle2.output_cluster(cluster)
 
         self.assertEqual(len(self.castle2.anonymized_clusters_InfoLoss), 6)
+
+    def test_get_num_of_all_pids(self):
+        castle = Castle(None, 6, 5, 2, 'easy_data')
+        cluster = Cluster(Tuple(1, 1, (21, 'Bachelors'), ()), 'easy_data')
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 1, (19, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 2, (21, 'Masters'), ()))
+        cluster.add_tupel(Tuple(2, 3, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 4, (18, 'Bachelors'), ()))
+
+        castle.not_anonymized_clusters = {cluster}
+        self.assertEqual(castle.get_num_of_all_pids(), 4)
+
+class TestCastleSet(unittest.TestCase):
+    def test_set_pos_stream(self):
+        castle = Castle(None, 6, 5, 2, 'easy_data')
+        castle.set_pos_stream(5)
+        self.assertEqual(castle.pos_stream, 5)
 
 
 

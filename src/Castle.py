@@ -9,10 +9,9 @@ import sys
 from src.Cluster import Cluster
 from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties
-from src.tree_functions import count_all_leaves, find_generalization, get_subtree
+from src.tree_functions import count_all_leaves, find_generalization, get_subtree, is_leaf_node, get_leaf_nodes
 
-
-logging.basicConfig(filename='castle_algo_ILoss_qi_10_adult-castle__32000__100_10000_50_ILoss_new.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_qi_test_4.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -28,12 +27,8 @@ class Castle:
         self.output = []
         self.name_dataset = name_dataset
         self.mu = 100
+        self.output_anonym = []
 
-    def set_anonymized_clusters(self, anonymized_clusters):
-        self.anonymized_clusters = anonymized_clusters
-
-    def set_not_anonymized_clusters(self, not_anonymized_clusters):
-        self.not_anonymized_clusters = not_anonymized_clusters
 
     def set_pos_stream(self, pos_stream):
         self.pos_stream = pos_stream
@@ -66,7 +61,7 @@ class Castle:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
-        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
+        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Output: {self.output_anonym}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
     def delay_constraint(self, tuple_prime):
         #print('delay_constraint')
@@ -141,6 +136,7 @@ class Castle:
             self.output.extend(c.data)
 
             for tuple in output_tuples:
+                self.output_anonym.append(tuple.qi)
                 self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
 
             self.tao = self.average_Loss()
@@ -150,62 +146,12 @@ class Castle:
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
+                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {cluster.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Output: {self.output_anonym}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
             else:
                 continue
         self.not_anonymized_clusters.remove(cluster)
 
-    def split_alt(self, cluster):
-        #print("Split Function")
-        split_cluster = set()
-        BS = cluster.group_tuples_by_pid()
-        while len(BS) >= self.k:
-            selected_bucket = random.choice(list(BS.keys()))
-            selected_tuple = random.choice(BS[selected_bucket])
-            new_cluster = Cluster(selected_tuple, self.name_dataset)
-            if not selected_bucket:
-                selected_bucket = None
-            # H is heap with k-1 nodes
-            H = self.initialize_heap(selected_tuple)
-            #H = [(float('inf'), i) for i in range(self.k - 1)]
-            #heapq.heapify(H)
-            for bucket in [b for b in BS if b != selected_bucket]:         # Führe Aktionen auf jedem "bucket" aus, der nicht "selected_bucket" ist.
-                # Zufälligen Tupel aus Bucket auswählen
-                tuple_from_bucket = random.choice(BS[bucket])
-
-                # Distanz berechnen
-                t_dist = self.calculate_tuple_distance(tuple_from_bucket, selected_tuple)
-
-                # Distanz von t ist kleiner als die Distanz des Wurzelelements von H
-
-                if t_dist < H[0].dist:
-                    # Ersetze Wurzelelement mit t
-                    heapq.heapreplace(H, HeapElement(t_dist, tuple_from_bucket))
-                elif len(H) == self.k - 1 and t_dist >= H[0].dist:
-                    heapq.heappushpop(H, HeapElement(t_dist, tuple_from_bucket))
-                else:
-                    heapq.heappush(H, HeapElement(t_dist, tuple_from_bucket))
-            for heap_element in H:
-                tuple_in_node = heap_element.tuple
-                new_cluster.add_tupel(tuple_in_node)
-                for bucket in BS:
-                    if tuple_in_node in BS[bucket]:
-                        BS[bucket].remove(tuple_in_node)
-                        # Wenn Bucket leer ist, entfernen
-                        if not BS[bucket]:
-                            del BS[bucket]
-                        break
-            split_cluster.add(new_cluster)
-        keys_to_remove = []
-        for bucket in BS.keys():
-            ti = random.choice(BS[bucket])
-            nearest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, ti))
-            nearest_cluster.update(BS[bucket])
-            keys_to_remove.append(bucket)
-        for key in keys_to_remove:
-            del BS[key]
-        return split_cluster
 
     def split(self, cluster):
         split_cluster = set()
@@ -260,16 +206,6 @@ class Castle:
 
         return H
 
-    """def group_tuples_by_pid(self, cluster_data):
-        grouped_data = dict()
-        for tupel in cluster_data:
-            pid = tupel.pid
-            if pid in grouped_data:
-                grouped_data[pid].append(tupel)
-            else:
-                grouped_data[pid] = [tupel]
-        return grouped_data
-"""
     def merge_cluster(self, cluster, set_of_clusters):
         #print("merge Cluster Funktion")
         # set_of clusters besteht aus non_anonymized_clusters
@@ -353,7 +289,7 @@ class Castle:
 
         # Calculate VInfoLoss for each attribute
         for i in range(n):
-            info_loss_cluster = self.VInfoLoss_cluster(cluster.t[i], i)
+            info_loss_cluster = self.VInfoLoss(cluster.t[i], i)
             sum_iloss_cluster += info_loss_cluster
             info_loss_together = self.VInfoLoss(enlarged_cluster.t[i], i)
             sum_iloss_enlarged_cluster += info_loss_together
@@ -364,7 +300,7 @@ class Castle:
         n = len(cluster)
         sum = 0
         for att_pos in range(n):
-            sum += self.VInfoLoss_cluster(cluster[att_pos], att_pos)
+            sum += self.VInfoLoss(cluster[att_pos], att_pos)
         return 1 / n * sum
 
     def InfoLoss_tupel(self, tupel):
@@ -422,6 +358,7 @@ class Castle:
     def add_unique_string_to_list(self, value, value_list):
         if value not in value_list:
             value_list.append(value)
+        return value_list
 
     def is_in_interval(self, value, interval):
         lower_bound, upper_bound = interval
@@ -435,13 +372,7 @@ class Castle:
             info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
         return info_loss
 
-    def VInfoLoss_cluster(self, attribut, pos) -> int:
-        info_loss = 0
-        if attribute_properties[self.name_dataset][pos]['type'] == 'continuous':
-            info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[self.name_dataset][pos]['interval'])
-        elif attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical_cluster(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
-        return info_loss
+
 
     def VInfoLoss_continuos(self, attribut_range, domain_range):
         if isinstance(attribut_range, int):
@@ -453,19 +384,18 @@ class Castle:
 
     def VInfoLoss_cathegorical(self, attribut_range, domain_tree):
         domain_range = count_all_leaves(domain_tree)
-        attribute_range_generalized = find_generalization(domain_tree, attribut_range)
-        generalized_range = count_all_leaves(get_subtree(domain_tree, attribute_range_generalized))
-        erg = (generalized_range - 1) / (domain_range - 1)
-        return erg
 
-    def VInfoLoss_cathegorical_cluster(self, attribut_range, domain_tree):
-        domain_range = count_all_leaves(domain_tree)
         if isinstance(attribut_range, str):
-            erg = 0
+            subtree = get_subtree(domain_tree, attribut_range)
+            subtree_leaf = get_leaf_nodes(subtree)
+            generalized_range = len(subtree_leaf)
+            return (generalized_range - 1) / (domain_range - 1)
         else:
-            generalized_range = len(attribut_range)
+            attribute_range_generalized = find_generalization(domain_tree, attribut_range)
+            generalized_range = count_all_leaves(get_subtree(domain_tree, attribute_range_generalized))
             erg = (generalized_range - 1) / (domain_range - 1)
-        return erg
+            return erg
+
 
     def average_Loss(self):
         if len(self.anonymized_clusters_InfoLoss) == 0:
