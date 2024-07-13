@@ -44,32 +44,6 @@ class TestCluster(unittest.TestCase):
         self.assertEqual(c.t, ([51, 53], ['Secondary School', 'Bachelors', 'Masters']))
 
 
-    def test_output_tuples_intervall(self):
-        t = Tuple(0, 0, (18, 'Bachelors'),())
-        c = Cluster(t, "easy_data")
-        c.add_tupel(Tuple(1, 1, (16, 'Bachelors'), ()))
-        c.add_tupel(Tuple(2, 2, (17, 'Bachelors'), ()))
-
-        with StringIO() as buf, redirect_stdout(buf):
-            c.output_tuples()
-            output = buf.getvalue()
-
-        expected_output = "Output: ([16, 18], ['Bachelors'])\nOutput: ([16, 18], ['Bachelors'])\nOutput: ([16, 18], ['Bachelors'])\n"
-        self.assertEqual(output, expected_output)
-
-    def test_output_tuples(self):
-        t = Tuple(0, 0, (18, 'Bachelors'), ())
-        c = Cluster(t, "easy_data")
-        c.add_tupel(Tuple(1, 1, (16, 'Masters'), ()))
-        c.add_tupel(Tuple(2, 2, (17, 'Primary School'), ()))
-
-        with StringIO() as buf, redirect_stdout(buf):
-            c.output_tuples()
-            output = buf.getvalue()
-
-        expected_output = "Output: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\nOutput: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\nOutput: ([16, 18], ['Bachelors', 'Masters', 'Primary School'])\n"
-        self.assertEqual(output, expected_output)
-
     def test_fits_in_cluster(self):
         tuple = Tuple(0, 0, (18, 'Bachelors'),())
         c = Cluster(tuple, "easy_data")
@@ -111,13 +85,12 @@ class TestCluster(unittest.TestCase):
 
         c.add_tupel(tuple2)
         c.add_tupel(tuple3)
-
-        tuple1.set_qi(c.t)
-        tuple2.set_qi(c.t)
-        tuple3.set_qi(c.t)
         erg = c.output_tuples()
 
-        self.assertEqual(erg, [tuple1, tuple2, tuple3])
+
+        self.assertTrue(erg[0].__eq__(Tuple(1, 1, ([52,54], 'Any Education'), ())))
+        self.assertTrue(erg[1].__eq__(Tuple(2, 2, ([52,54], 'Any Education'), ())))
+        self.assertTrue(erg[2].__eq__(Tuple(3, 3, ([52,54], 'Any Education'), ())))
 
     def test_if_cluster_is_equal(self):
         tuple1= Tuple(1, 1, (18, 'Bachelors'), ())
