@@ -11,7 +11,7 @@ from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree, is_leaf_node, get_leaf_nodes
 
-logging.basicConfig(filename='castle_algo_ILoss_qi_test_4.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_qi_2-10_32000_100_10000_50_current.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -140,7 +140,7 @@ class Castle:
                 self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
 
             self.tao = self.average_Loss()
-            if self.InfoLoss(cluster.t) >= self.tao:
+            if self.InfoLoss(cluster.t) < self.tao:
                 self.anonymized_clusters.add(cluster)
                 Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
                 """for _ in range(len(cluster.data)):
