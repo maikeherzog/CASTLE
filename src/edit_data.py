@@ -27,7 +27,7 @@ attribute_properties = {
         0: {'name': 'age', 'type': 'continuous', 'interval': (18, 120)},
         1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_easy}
     },
-"adult_sorted":{
+    "adult_sorted":{
         0: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
         1: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
         2: {'name': 'hours-per-week', 'type': 'continuous', 'interval': (1, 99)},
