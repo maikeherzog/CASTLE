@@ -194,10 +194,6 @@ native_country_tree = {
                     'children': [
                         {'name': 'England'},
                         {'name': 'Germany'},
-                        {'name': 'France'},
-                        {'name': 'Italy'},
-                        {'name': 'Spain'},
-                        {'name': 'Portugal'},
                         {'name': 'Ireland'},
                         {'name': 'Scotland'},
                         {'name': 'Netherlands'},
@@ -348,6 +344,361 @@ education_tree_easy = {
         }
     ]
 }
+native_country_tree_binary = {
+    'name': 'Any native country',
+    'children': [
+        {
+            'name': 'Amerika',
+            'children': [
+                {
+                    'name': 'America A',
+                    'children': [
+                        {
+                            'name': 'America 1',
+                            'children': [
+                                {
+                                    'name': 'North America',
+                                    'children': [
+                                        {
+                                            'name': 'North America -North',
+                                            'children': [
+                                                {'name': 'United-States'},
+                                                {'name': 'Canada'}
+                                            ]
+                                        },
+                                        {'name': 'Mexico'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Central America',
+                                    'children': [
+                                        {
+                                            'name': 'Central America -North',
+                                            'children': [
+                                                {'name': 'Honduras'},
+                                                {'name': 'El-Salvador'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Central America -South',
+                                            'children': [
+                                                {'name': 'Guatemala'},
+                                                {'name': 'Nicaragua'}
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            'name': 'America 2',
+                            'children': [
+
+                                {
+                                    'name': 'South America',
+                                    'children': [
+                                        {
+                                            'name': 'South America -North',
+                                            'children': [
+                                                {'name': 'Ecuador'},
+                                                {'name': 'Columbia'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'South America -South',
+                                            'children': [
+                                                {'name': 'Peru'},
+                                                {'name': 'Bolivia'}
+                                            ]
+                                        },
+                                    ]
+                                },
+                                {
+                                    'name': 'Caribbean',
+                                    'children': [
+                                        {
+                                            'name': 'Caribbean -West',
+                                            'children': [
+                                                {'name': 'Jamaica'},
+                                                {'name': 'Cuba'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Caribbean -Central/East',
+                                            'children': [
+                                                {
+                                                    'name': 'Caribbean -East',
+                                                    'children': [
+                                                        {'name': 'Puerto-Rico'},
+                                                        {'name': 'Dominican-Republic'},
+                                                    ]
+                                                },
+                                                {
+                                                    'name': 'Caribbean -Central',
+                                                    'children': [
+                                                        {'name': 'Trinadad&Tobago'},
+                                                        {'name': 'Haiti'}
+                                                    ]
+                                                }
+                                            ]
+                                        }
+
+                                    ]
+                                },
+                            ]
+                        },
+                    ]
+                },
+
+                {
+                    'name': 'Amerika - Other',
+                    'children': [
+                        {'name': 'Outlying-US(Guam-USVI-etc)'},
+                        {'name': 'Hong'}
+                    ]
+
+                 }
+
+            ]
+        },
+        {
+            'name': 'Europe',
+            'children': [
+                {
+                    'name': 'Europe 1',
+                    'children': [
+                        {
+                            'name': 'Western Europe',
+                            'children': [
+                                {
+                                    'name': 'Western Europe 1',
+                                    'children': [
+                                        {
+                                            'name': 'Western Europe 1.1',
+                                            'children': [
+                                                {'name': 'England'},
+                                                {'name': 'Scotland'},
+
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Western Europe -East',
+                                            'children': [
+                                                {'name': 'Germany'},
+                                                {'name': 'Ireland'},
+                                            ]
+                                        },
+                                    ]
+                                },
+                                {
+                                    'name': 'Western Europe 2',
+                                    'children': [
+                                        {'name': 'Netherlands'},
+                                        {'name': 'Holand-Netherlands'},
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            'name': 'Eastern Europe',
+                            'children': [
+                                {
+                                    'name': 'Eastern Europe 1',
+                                    'children': [
+                                        {'name': 'Poland'},
+                                        {'name': 'Hungary'},
+                                    ]
+                                },
+                                {'name': 'Yugoslavia'}
+                            ]
+                        },
+                    ]
+                },
+                {
+                    'name': 'Europe 2',
+                    'children': [
+                        {
+                            'name': 'Northern Europe',
+                            'children': [
+                                {
+                                    'name': 'Northern Europe 1',
+                                    'children': [
+                                        {'name': 'Sweden'},
+                                        {'name': 'Norway'},
+                                    ]
+                                },
+                                {
+                                    'name': 'Northern Europe 2',
+                                    'children': [
+                                        {'name': 'Finland'},
+                                        {'name': 'Denmark'}
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            'name': 'Southern Europe',
+                            'children': [
+                                {
+                                    'name': 'Southern Europe 1',
+                                    'children': [
+                                        {'name': 'Greece'},
+                                        {'name': 'Italy'},
+                                    ]
+                                },
+                                {
+                                    'name': 'Southern Europe 2',
+                                    'children': [
+                                        {'name': 'Portugal'},
+                                        {'name': 'Spain'},
+                                    ]
+                                },
+                                {'name': 'France'}
+
+                            ]
+                        }
+                    ]
+                }
+
+
+            ]
+        },
+        {
+            'name': 'Asia',
+            'children': [
+                {
+                    'name': 'Asia 1',
+                    'children': [
+                        {
+                            'name': 'Eastern Asia',
+                            'children': [
+                                {
+                                    'name': 'Eastern Asia A',
+                                    'children': [
+                                        {
+                                            'name': 'Eastern Asia 1',
+                                            'children': [
+                                                {'name': 'Japan'},
+                                                {'name': 'China'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Eastern Asia 2',
+                                            'children': [
+                                                {'name': 'South Korea'},
+                                                {'name': 'Taiwan'}
+                                            ]
+                                        },
+                                    ]
+                                },
+
+                                {'name': 'Vietnam'}
+                            ]
+                        },
+                        {
+                            'name': 'South Asia',
+                            'children': [
+                                {
+                                    'name': 'South Asia 1',
+                                    'children': [
+                                        {'name': 'India'},
+                                        {'name': 'Pakistan'}
+                                    ]
+                                },
+                                {
+                                    'name': 'South Asia 2',
+                                    'children': [
+                                        {'name': 'Bangladesh'},
+                                        {'name': 'Sri Lanka'}
+                                    ]
+                                }
+                            ]
+                        },
+                    ]
+                },
+                {
+                    'name': 'Asia 2',
+                    'children': [
+                        {
+                            'name': 'Southeast Asia',
+                            'children': [
+                                {
+                                    'name': 'Southeast Asia 1',
+                                    'children': [
+                                        {'name': 'Philippines'},
+                                        {'name': 'Thailand'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Southeast Asia 2',
+                                    'children': [
+                                        {'name': 'Cambodia'},
+                                        {'name': 'Laos'}
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            'name': 'Middle East',
+                            'children': [
+                                {
+                                    'name': 'Middle East 1',
+                                    'children': [
+                                        {'name': 'Iran'},
+                                        {'name': 'Iraq'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Middle East 2',
+                                    'children': [
+                                        {'name': 'Israel'},
+                                        {'name': 'Saudi-Arabia'},
+                                    ]
+                                },
+                                {'name': 'Turkey'}
+                            ]
+                        }
+                    ]
+                }
+
+
+            ]
+        },
+        {
+            'name': 'Oceania',
+            'children': [
+                {
+                    'name': 'Oceania A',
+                    'children': [
+                        {
+                            'name': 'Oceania 1',
+                            'children': [
+                                {'name': 'Australia'},
+                                {'name': 'New-Zealand'}
+                            ]
+                        },
+                        {
+                            'name': 'Oceania 2',
+                            'children': [
+                                {'name': 'Guam'},
+                                {'name': 'Fiji'}
+                            ]
+                        },
+                    ]
+                },
+                {
+                    'name': 'Oceania 3',
+                    'children': [
+                        {'name': 'Papua-New-Guinea'},
+                        {'name': 'South',}
+                    ]
+                }
+            ]
+        },
+
+    ]
+}
+
 
 
 
