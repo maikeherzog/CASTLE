@@ -344,6 +344,7 @@ education_tree_easy = {
         }
     ]
 }
+
 native_country_tree_binary = {
     'name': 'Any native country',
     'children': [
@@ -699,6 +700,314 @@ native_country_tree_binary = {
     ]
 }
 
+occupation_tree_binary = {
+    'name': 'Any occupation',
+    'children': [
+        {
+            'name': 'Any occupation 1',
+            'children':[
+                {
+                    'name': 'Service',
+                    'children': [
+                        {
+                            'name': 'Service A',
+                            'children': [
+                                {'name': 'Tech-support'},
+                                {'name': 'Craft-repair'},
+                            ]
+                        },
+                        {
+                            'name': 'Service B',
+                            'children': [
+                                {'name': 'Other-service'},
+                                {'name': 'Priv-house-serv'}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    'name': 'Other',
+                    'children': [
+                        {
+                            'name': 'Other 1',
+                            'children': [
+                                {'name': 'Sales'},
+                                {'name': 'Exec-managerial'},
+                            ]
+                        },
+                        {
+                            'name': 'Other 2',
+                            'children': [
+                                {'name': 'Prof-specialty'},
+                                {'name': 'Adm-clerical'}
+                            ]
+                        }
+                    ]
+                },
+            ]
+        },
+        {
+            'name': 'Any occupation 2',
+            'children': [
+                {
+                    'name': 'Labor',
+                    'children': [
+                        {
+                            'name': 'Labor A',
+                            'children': [
+                                {'name': 'Handlers-cleaners'},
+                                {'name': 'Machine-op-inspct'},
+                            ]
+                        },
+                        {
+                            'name': 'Labor B',
+                            'children': [
+                                {'name': 'Farming-fishing'},
+                                {'name': 'Transport-moving'}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    'name': 'Protective services',
+                    'children': [
+                        {'name': 'Protective-serv'},
+                        {'name': 'Armed-Forces'}
+                    ]
+                }
+            ]
+        }
+
+
+    ]
+}
+
+workclass_tree_binary = {
+    'name': 'Any Workclass',
+    'children': [
+        {
+            'name': 'Any Workclass 1',
+            'children': [
+                {'name': 'Private'},
+                {
+                    'name': 'Self-Employed',
+                    'children': [
+                        {'name': 'Self-emp-not-inc'},
+                        {'name': 'Self-emp-inc'}
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'Any Workclass 2',
+            'children': [
+                {
+                    'name': 'Government',
+                    'children': [
+                        {
+                            'name': 'Government A',
+                            'children': [
+                                {'name': 'Federal-gov'},
+                                {'name': 'Local-gov'}
+                            ]
+                        },
+
+                        {'name': 'State-gov'}
+                    ]
+                },
+                {
+                    'name': 'No Pay',
+                    'children': [
+                        {'name': 'Without-pay'},
+                        {'name': 'Never-worked'}
+                    ]
+                }
+            ]
+        }
+
+
+    ]
+}
+
+marital_status_tree_binary = {
+    'name': 'Any marital-status',
+    'children': [
+        {
+            'name': 'married',
+            'children': [
+                {
+                    'name': 'married 1',
+                    'children': [
+                        {'name': 'Married-civ-spouse'},
+                        {'name': 'Married-spouse-absent'}
+                    ]
+                },
+                {'name': 'Married-AF-spouse'}
+
+            ]
+        },
+        {
+            'name': 'not married',
+            'children': [
+                {
+                    'name': 'not married 1',
+                    'children': [
+                        {'name': 'Never-married'},
+                        {'name': 'Separated'}
+                    ]
+                },
+                {
+                    'name': 'not married 2',
+                    'children': [
+                        {'name': 'Widowed'},
+                        {'name': 'Divorced'}
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+race_tree_binary = {
+    'name': 'Any Race',
+    'children': [
+        {
+            'name': 'Any Race A',
+            'children': [
+                {'name': 'White'},
+                {'name': 'Asian-Pac-Islander'}
+            ]
+        },
+        {
+            'name': 'Any Race B',
+            'children': [
+                {
+                    'name': 'Any Race B 1',
+                    'children': [
+                        {'name': 'Amer-Indian-Eskimo'},
+                        {'name': 'Other'}
+                    ]
+                },
+                {'name': 'Black'}
+            ]
+        }
+
+    ]
+}
+
+education_tree_binary = {
+    'name': 'Any Education',
+    'children': [
+        {'name': 'Preschool'},
+        {
+            'name': 'Elementary School',
+            'children': [
+                {
+                    'name': 'Elementary School 1',
+                    'children': [
+                        {'name': '1st-4th'},
+                        {'name': '5th-6th'}
+                    ]
+                },
+                {'name': '7th-8th'}
+            ]
+        },
+        {
+            'name': 'High School',
+            'children': [
+                {
+                    'name': 'High School 1',
+                    'children': [
+                        {'name': '9th'},
+                        {'name': '10th'}
+                    ]
+                },
+                {
+                    'name': 'High School 2',
+                    'children': [
+                        {
+                            'name': 'High School 2.1',
+                            'children': [
+                                {'name': '11th'},
+                                {'name': '12th'}
+                            ]
+                        },
+                        {'name': 'HS-grad'}
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'College',
+            'children': [
+                {
+                    'name': 'College A',
+                    'children': [
+                        {
+                            'name': 'College 1',
+                            'children': [
+                                {'name': 'Bachelors'},
+                                {'name': 'Some-college'}
+                            ]
+                        },
+                        {
+                            'name': 'College 2',
+                            'children': [
+                                {'name': 'Prof-school'},
+                                {'name': 'Assoc-acdm'}
+                            ]
+                        },
+                    ]
+                },
+                {
+                    'name': 'College 3',
+                    'children': [
+                        {
+                            'name': 'College 3.1',
+                            'children': [
+                                {'name': 'Assoc-voc'},
+                                {'name': 'Masters'}
+                            ]
+                        },
+                        {'name': 'Doctorate'}
+                    ]
+                },
+            ]
+        }
+    ]
+}
+
+relationship_tree_binary = {
+    'name': 'Any Relationship',
+    'children': [
+        {
+            'name': 'Any Relationship A',
+            'children': [
+                {
+                    'name': 'Romantic-partner',
+                    'children': [
+                        {'name': 'Wife'},
+                        {'name': 'Husband'}
+                    ]
+                },
+                {
+                    'name': 'Family-member',
+                    'children': [
+                        {'name': 'Own-child'},
+                        {'name': 'Other-relative'}
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'Non-family',
+            'children': [
+                {'name': 'Not-in-family'},
+                {'name': 'Unmarried'}
+            ]
+        }
+    ]
+}
 
 
 
