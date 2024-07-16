@@ -150,7 +150,7 @@ class Castle:
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'neues anonymisiertes Cluster')
+                logger.info(f'neues anonymisiertes Cluster: {c.t}')
             else:
                 pass
             self.not_anonymized_clusters.remove(c)
