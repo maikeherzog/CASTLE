@@ -29,6 +29,7 @@ class Castle:
         self.mu = 100
         self.output_anonym = []
         self.num_cluster= 0
+        self.all_cluster_Iloss = []
 
 
     def set_pos_stream(self, pos_stream):
@@ -62,7 +63,7 @@ class Castle:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
-        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}')
+        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Durchschnittlicher ILoss über Cluster:{self.average_loss_all_clusters()}')
 
     def delay_constraint(self, tuple_prime):
         #print('delay_constraint')
@@ -141,6 +142,7 @@ class Castle:
                 self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
 
             logger.info(f'Cluster veröffentlicht, Nummer Cluster: {self.num_cluster}, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {c.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Anzahl Tupel in Cluster:{len(c.data)} Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, InfoLoss Clustermuster:{self.InfoLoss(c.t)} ')
+            self.all_cluster_Iloss.append(self.InfoLoss(c.t))
 
             self.tao = self.average_Loss()
             if self.InfoLoss(c.t) < self.tao:
@@ -426,6 +428,12 @@ class Castle:
             return 0
         else:
             return (1/len(self.anonymized_clusters_InfoLoss)) * sum(self.anonymized_clusters_InfoLoss)
+
+    def average_loss_all_clusters(self):
+        if len(self.all_cluster_Iloss) == 0:
+            return 0
+        else:
+            return (1/len(self.all_cluster_Iloss)) * sum(self.all_cluster_Iloss)
     def calculate_tuple_distance(self, tuple1, tuple2) -> float:
         num_diff = 0
         str_diff = 0
