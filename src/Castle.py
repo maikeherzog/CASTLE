@@ -154,7 +154,8 @@ class Castle:
             else:
                 pass
             self.not_anonymized_clusters.remove(c)
-        self.not_anonymized_clusters.remove(cluster)
+        if (cluster in self.not_anonymized_clusters):
+            self.not_anonymized_clusters.remove(cluster)
 
 
     def split(self, cluster):
@@ -243,7 +244,7 @@ class Castle:
                     break
 
             is_cluster_k_ano = cluster.is_k_anonymous(self.k)
-
+        self.not_anonymized_clusters.add(cluster)
         return cluster
 
     def best_selection(self, tuple)-> Cluster:
