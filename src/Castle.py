@@ -28,13 +28,14 @@ class Castle:
         self.name_dataset = name_dataset
         self.mu = 100
         self.output_anonym = []
+        self.num_cluster= 0
 
 
     def set_pos_stream(self, pos_stream):
         self.pos_stream = pos_stream
 
     def castle_algo(self, S):
-        logger.info(f'Starte Castle Algorithmus mit k={self.k}, delta={self.delta}, beta={self.beta}, name_dataset={self.name_dataset}, len_qi={len(S[0].qi)}, example_qi = {S[0].qi}')
+        logger.info(f'Starte Castle Algorithmus mit k={self.k}, delta={self.delta}, beta={self.beta}, name_dataset={self.name_dataset}, len_qi={len(S[0].qi)}, example_qi = {S[0].qi}, Anzahl anonyme CLuster: {len(self.anonymized_clusters)}, Anzahl nicht anonyme Cluster: {len(self.not_anonymized_clusters)}, Anzahl alle Cluster:{self.num_cluster}')
         while self.stream and self.pos_stream < len(self.stream):
             print("pos_stream", self.pos_stream)
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
@@ -61,7 +62,7 @@ class Castle:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
-        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Output: {self.output_anonym}, Liste des Informationloss: {self.get_recent_InfoLoss()}')
+        logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}')
 
     def delay_constraint(self, tuple_prime):
         #print('delay_constraint')
@@ -134,10 +135,12 @@ class Castle:
         for c in split_cluster:
             output_tuples = c.output_tuples()
             self.output.extend(c.data)
-
+            self.num_cluster += 1
             for tuple in output_tuples:
                 self.output_anonym.append(tuple.qi)
                 self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
+
+            logger.info(f'Cluster veröffentlicht, Nummer Cluster: {self.num_cluster}, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {c.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Anzahl Tupel in Cluster:{len(c.data)} Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, InfoLoss Clustermuster:{self.InfoLoss(c.t)} ')
 
             self.tao = self.average_Loss()
             if self.InfoLoss(c.t) < self.tao:
@@ -147,8 +150,7 @@ class Castle:
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {c.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Output: {self.output_anonym}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
-
+                logger.info(f'neues anonymisiertes Cluster')
             else:
                 pass
             self.not_anonymized_clusters.remove(c)
