@@ -11,7 +11,7 @@ from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree, is_leaf_node, get_leaf_nodes
 
-logging.basicConfig(filename='castle_algo_ILoss_qi_2-10_32000_100_10000_50_current.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_k_20-50-100-200_32000__10000_50_current.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -140,16 +140,18 @@ class Castle:
                 self.anonymized_clusters_InfoLoss.append(self.InfoLoss(tuple.qi))
 
             self.tao = self.average_Loss()
-            if self.InfoLoss(cluster.t) < self.tao:
-                self.anonymized_clusters.add(cluster)
-                Info_Loss_anonymized_cluster = self.InfoLoss(cluster.t)
+            if self.InfoLoss(c.t) < self.tao:
+                self.anonymized_clusters.add(c)
+
+                Info_Loss_anonymized_cluster = self.InfoLoss(c.t)
                 """for _ in range(len(cluster.data)):
                     self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)"""
                 #self.anonymized_clusters_InfoLoss.append(Info_Loss_anonymized_cluster)
-                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {cluster.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Output: {self.output_anonym}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
+                logger.info(f'anonymisiertes Cluster hinzugefügt, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {c.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Output: {self.output_anonym}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()} Liste des Informationloss: {self.get_recent_InfoLoss()}')
 
             else:
-                continue
+                pass
+            self.not_anonymized_clusters.remove(c)
         self.not_anonymized_clusters.remove(cluster)
 
 
@@ -309,6 +311,15 @@ class Castle:
         for att_pos in range(n):
             sum += self.VInfoLoss(tupel[att_pos], att_pos)
         return 1 / n * sum
+
+    def InfoLoss_anonymized_cluster(self, clusters):
+        for cluster in clusters:
+            n = len(cluster.t)
+            sum = 0
+            for att_pos in range(n):
+                sum += self.VInfoLoss(cluster.t[att_pos], att_pos)
+            return 1 / n * sum
+
 
 
     def add_tupel(self, cluster, tupel):

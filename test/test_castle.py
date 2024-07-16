@@ -263,6 +263,7 @@ class TestIloss(unittest.TestCase):
         iloss_3 = castle.InfoLoss(cluster_3.t)
         self.assertEqual(iloss_3, 0.27941176470588236)
 
+
     def test_InfoLoss(self):
         castle = Castle(None, 6, 5, 2, "easy_data")
         tuple1 = Tuple(0, 0, (26, 'Masters'), ())
@@ -314,8 +315,24 @@ class TestOutput(unittest.TestCase):
         self.castle2.not_anonymized_clusters = {cluster}
 
         output = self.castle2.output_cluster(cluster)
-
+        self.assertEqual(len(self.castle2.not_anonymized_clusters), 0)
         self.assertEqual(len(self.castle2.anonymized_clusters_InfoLoss), 6)
+
+    def test_output_cluster2(self):
+        cluster = Cluster(Tuple(1, 1, (21, 'Bachelors'), ()), 'easy_data')
+        cluster.add_tupel(Tuple(2, 2, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 1, (19, 'Bachelors'), ()))
+        cluster.add_tupel(Tuple(5, 2, (21, 'Masters'), ()))
+        cluster.add_tupel(Tuple(2, 3, (20, 'Masters'), ()))
+        cluster.add_tupel(Tuple(4, 4, (18, 'Bachelors'), ()))
+
+        self.castle2.anonymized_clusters_InfoLoss = [0.5, 0.5, 0.5, 0.5]
+
+        self.castle2.not_anonymized_clusters = {cluster}
+
+        output = self.castle2.output_cluster(cluster)
+        self.assertEqual(len(self.castle2.not_anonymized_clusters), 0)
+        self.assertEqual(len(self.castle2.anonymized_clusters_InfoLoss), 10)
 
     def test_get_num_of_all_pids(self):
         castle = Castle(None, 6, 5, 2, 'easy_data')
