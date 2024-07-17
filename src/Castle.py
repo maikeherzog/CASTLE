@@ -11,7 +11,7 @@ from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree, is_leaf_node, get_leaf_nodes
 
-logging.basicConfig(filename='castle_algo_ILoss_k_20-50-100-200_32000__10000_50_current.log', level=logging.INFO)
+logging.basicConfig(filename='castle_algo_ILoss_k_20-50-100-200_32000__10000_50_current_6.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
     def __init__(self, stream, k, delta, beta, name_dataset):
@@ -246,7 +246,7 @@ class Castle:
                     break
 
             is_cluster_k_ano = cluster.is_k_anonymous(self.k)
-        self.not_anonymized_clusters.add(cluster)
+        #self.not_anonymized_clusters.add(cluster)
         return cluster
 
     def best_selection(self, tuple)-> Cluster:
