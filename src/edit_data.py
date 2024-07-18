@@ -112,6 +112,24 @@ attribute_properties = {
             13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
             14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
 
+    },
+    "adult_castle_diff_tree":{
+            0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
+            1: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
+            2: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
+            3: {'name': 'capital-gain', 'type': 'continuous', 'interval': (0, 99999)},
+            4: {'name': 'capital-loss', 'type': 'continuous', 'interval': (0, 4356)},
+            5: {'name': 'hours-per-week', 'type': 'continuous', 'interval': (1, 99)},
+            6: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_binary},
+            7: {'name': 'marital-status', 'type': 'cathegorical', 'hierarchy_tree': marital_status_tree_binary},
+            8: {'name': 'occupation', 'type': 'cathegorical', 'hierarchy_tree': occupation_tree_binary},
+            9: {'name': 'native-country', 'type': 'cathegorical', 'hierarchy_tree': native_country_tree_binary_short},
+            10: {'name': 'workclass', 'type': 'cathegorical', 'hierarchy_tree': workclass_tree_binary_short},
+            11: {'name': 'relationship', 'type': 'cathegorical', 'hierarchy_tree': relationship_tree_binary},
+            12: {'name': 'race', 'type': 'cathegorical', 'hierarchy_tree': race_tree_binary},
+            13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
+            14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
+
     }
 }
 

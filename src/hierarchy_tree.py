@@ -1009,6 +1009,301 @@ relationship_tree_binary = {
     ]
 }
 
+workclass_tree_binary_short = {
+    'name': 'Any Workclass',
+    'children': [
+        {
+            'name': 'Any Workclass 1',
+            'children': [
+                {'name': 'Private'},
+                {
+                    'name': 'Self-Employed',
+                    'children': [
+                        {'name': 'Self-emp-not-inc'},
+                        {'name': 'Self-emp-inc'}
+                    ]
+                }
+            ]
+        },
+        {
+            'name': 'Any Workclass 2',
+            'children': [
+                {
+                    'name': 'Government 1',
+                    'children': [
+                        {
+                            'name': 'Government A',
+                            'children': [
+                                {'name': 'Federal-gov'},
+                                {'name': 'Local-gov'}
+                            ]
+                        },
+                        {
+                            'name': 'Government 2',
+                            'children': [
+                                {'name': 'Without-pay'},
+                                {'name': 'State-gov'}
+                            ]
+                        }
+                    ]
+                }
+
+            ]
+        }
+    ]
+}
+
+native_country_tree_binary_short = {
+    'name': 'Any native country',
+    'children': [
+        {
+            'name': 'Any native country 1',
+            'children': [
+                {
+                    'name': 'Amerika',
+                    'children': [
+                        {
+                            'name': 'America A',
+                            'children': [
+                                {
+                                    'name': 'America 1',
+                                    'children': [
+                                        {
+                                            'name': 'North America',
+                                            'children': [
+                                                {
+                                                    'name': 'North America -North',
+                                                    'children': [
+                                                        {'name': 'United-States'},
+                                                        {'name': 'Canada'}
+                                                    ]
+                                                },
+                                                {'name': 'Mexico'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Central America',
+                                            'children': [
+                                                {
+                                                    'name': 'Central America -North',
+                                                    'children': [
+                                                        {'name': 'Honduras'},
+                                                        {'name': 'El-Salvador'}
+                                                    ]
+                                                },
+                                                {
+                                                    'name': 'Central America -South',
+                                                    'children': [
+                                                        {'name': 'Guatemala'},
+                                                        {'name': 'Nicaragua'}
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    'name': 'America 2',
+                                    'children': [
+
+                                        {
+                                            'name': 'South America',
+                                            'children': [
+                                                {
+                                                    'name': 'South America -North',
+                                                    'children': [
+                                                        {'name': 'Ecuador'},
+                                                        {'name': 'Columbia'}
+                                                    ]
+                                                },
+                                                {'name': 'Peru'}
+                                            ]
+                                        },
+                                        {
+                                            'name': 'Caribbean',
+                                            'children': [
+                                                {
+                                                    'name': 'Caribbean -West',
+                                                    'children': [
+                                                        {'name': 'Jamaica'},
+                                                        {'name': 'Cuba'}
+                                                    ]
+                                                },
+                                                {
+                                                    'name': 'Caribbean -Central/East',
+                                                    'children': [
+                                                        {
+                                                            'name': 'Caribbean -East',
+                                                            'children': [
+                                                                {'name': 'Puerto-Rico'},
+                                                                {'name': 'Dominican-Republic'},
+                                                            ]
+                                                        },
+                                                        {
+                                                            'name': 'Caribbean -Central',
+                                                            'children': [
+                                                                {'name': 'Trinadad&Tobago'},
+                                                                {'name': 'Haiti'}
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+
+                                            ]
+                                        },
+                                    ]
+                                },
+                            ]
+                        },
+
+                        {
+                            'name': 'Amerika - Other',
+                            'children': [
+                                {'name': 'Outlying-US(Guam-USVI-etc)'},
+                                {'name': 'Hong'}
+                            ]
+
+                         }
+
+                    ]
+                },
+                {
+                    'name': 'Europe',
+                    'children': [
+                        {
+                            'name': 'Europe 1',
+                            'children': [
+                                {
+                                    'name': 'Western Europe',
+                                    'children': [
+                                        {
+                                            'name': 'Western Europe 1',
+                                            'children': [
+                                                {
+                                                    'name': 'Western Europe 1.1',
+                                                    'children': [
+                                                        {'name': 'England'},
+                                                        {'name': 'Scotland'},
+
+                                                    ]
+                                                },
+                                                {
+                                                    'name': 'Western Europe -East',
+                                                    'children': [
+                                                        {'name': 'Germany'},
+                                                        {'name': 'Ireland'},
+                                                    ]
+                                                },
+                                            ]
+                                        },
+                                        {'name': 'Holand-Netherlands'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Eastern Europe',
+                                    'children': [
+                                        {
+                                            'name': 'Eastern Europe 1',
+                                            'children': [
+                                                {'name': 'Poland'},
+                                                {'name': 'Hungary'},
+                                            ]
+                                        },
+                                        {'name': 'Yugoslavia'}
+                                    ]
+                                },
+                            ]
+                        },
+                        {
+                            'name': 'Europe 2',
+                            'children': [
+
+                                {
+                                    'name': 'Southern Europe 1',
+                                    'children': [
+                                        {'name': 'Greece'},
+                                        {'name': 'Italy'},
+                                    ]
+                                },
+                                {
+                                    'name': 'Southern Europe 2',
+                                    'children': [
+                                        {'name': 'Portugal'},
+                                        {'name': 'France'}
+
+                                    ]
+                                }
+                            ]
+                        }
+
+
+                    ]
+                },
+            ]
+        },
+        {
+            'name': 'Asia',
+            'children': [
+                {
+                    'name': 'Asia 1',
+                    'children': [
+                        {
+                            'name': 'Eastern Asia A',
+                            'children': [
+                                {
+                                    'name': 'Eastern Asia 1',
+                                    'children': [
+                                        {'name': 'Japan'},
+                                        {'name': 'China'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Eastern Asia 2',
+                                    'children': [
+                                        {'name': 'Taiwan'},
+                                        {'name': 'Vietnam'}
+                                    ]
+                                },
+                            ]
+                        },
+                        {'name': 'India'}
+                    ]
+                },
+                {
+                    'name': 'Asia 2',
+                    'children': [
+                        {
+                            'name': 'Southeast Asia',
+                            'children': [
+                                {
+                                    'name': 'Southeast Asia 1',
+                                    'children': [
+                                        {'name': 'Philippines'},
+                                        {'name': 'Thailand'}
+                                    ]
+                                },
+                                {
+                                    'name': 'Southeast Asia 2',
+                                    'children': [
+                                        {'name': 'Cambodia'},
+                                        {'name': 'Laos'}
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            'name': 'Oceania 3',
+                            'children': [
+                                {'name': 'South', },
+                                {'name': 'Iran'}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+    ]
+}
 
 
 
