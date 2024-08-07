@@ -7,9 +7,9 @@ class Data:
     def __init__(self, data, qi_index, sa_index):
         """
         Constructor of the Data class.
-        :param data:
-        :param qi_index:
-        :param sa_index:
+        :param data Iterable[Tuple]: the stream of tuples
+        :param qi_index List[int]: indices of the Quasi-identifier attributes in a stream tuple
+        :param sa_index List[int]: indices of the sensitive attributes in a stream tuple
         """
         self.data = self.data_from_stream(data, qi_index, sa_index)
 
