@@ -78,7 +78,7 @@ class TestMergeCluster(unittest.TestCase):
         cluster2.add_tupel(tuple5)
 
         not_anonymized_clusters = {cluster2}
-        self.castle.not_anonymized_clusters = not_anonymized_clusters
+        self.castle.not_anonymized_clusters = {cluster1, cluster2}
         # Aufrufen der zu testenden Funktion
         result = self.castle.merge_cluster(cluster1, not_anonymized_clusters)
 
@@ -87,6 +87,79 @@ class TestMergeCluster(unittest.TestCase):
         self.assertEqual(result.data, expected_cluster_data)
         self.assertEqual(result.t, ([12, 28], ['Bachelors', 'Masters']))
 
+class TestDelayConstraint(unittest.TestCase):
+    def test_delay_constraint(self):
+        tuple0 = Tuple(0, 1, (18, 'Bachelors'), ())
+        cluster1 = Cluster(tuple0, "easy_data")
+        tuple1 = Tuple(1, 2, (24, 'Bachelors'), ())
+        tuple2 = Tuple(2, 1, (23, 'Masters'), ())
+        cluster1.add_tupel(tuple1)
+        cluster1.add_tupel(tuple2)
+
+        tuple3 = Tuple(3, 3, (12, 'Bachelors'), ())
+        cluster2 = Cluster(tuple3, "easy_data")
+        tuple4 = Tuple(5, 4, (12, 'Bachelors'), ())
+        tuple5 = Tuple(6, 4, (28, 'Masters'), ())
+        cluster2.add_tupel(tuple4)
+        cluster2.add_tupel(tuple5)
+
+        tuple3 = Tuple(3, 7, (15, 'Bachelors'), ())
+        cluster3 = Cluster(tuple3, "easy_data")
+
+        castle = Castle([tuple3], 2, 5, 2, 'easy_data')
+
+
+
+        tuple6 = Tuple(7, 5, (12, 'Bachelors'), ())
+
+        castle.anonymized_clusters = {cluster1, cluster2}
+        castle.not_anonymized_clusters = {cluster3}
+        castle.delay_constraint(tuple3)
+        self.assertEqual(len(castle.anonymized_clusters), 2)
+
+    def test_delay_constraint_2(self):
+        tuple0 = Tuple(0, 1, (18, 'Bachelors'), ())
+        cluster1 = Cluster(tuple0, "easy_data")
+        tuple1 = Tuple(1, 2, (24, 'Bachelors'), ())
+        tuple2 = Tuple(2, 1, (23, 'Masters'), ())
+        tuple7 = Tuple(1, 3, (24, 'Bachelors'), ())
+        cluster1.add_tupel(tuple1)
+        cluster1.add_tupel(tuple2)
+        cluster1.add_tupel(tuple7)
+
+        tuple3 = Tuple(3, 3, (12, 'Bachelors'), ())
+        cluster2 = Cluster(tuple3, "easy_data")
+        tuple4 = Tuple(5, 4, (12, 'Bachelors'), ())
+        tuple5 = Tuple(6, 4, (28, 'Masters'), ())
+        tuple8 = Tuple(6, 5, (28, 'Masters'), ())
+        cluster2.add_tupel(tuple4)
+        cluster2.add_tupel(tuple5)
+        cluster2.add_tupel(tuple8)
+
+        tuple9 = Tuple(3, 7, (15, 'Bachelors'), ())
+        cluster4 = Cluster(tuple9, "easy_data")
+        tuple10 = Tuple(3, 8, (15, 'Bachelors'), ())
+        tuple11 = Tuple(3, 9, (15, 'Bachelors'), ())
+        tuple12 = Tuple(3, 10, (15, 'Bachelors'), ())
+        cluster4.add_tupel(tuple10)
+        cluster4.add_tupel(tuple11)
+        cluster4.add_tupel(tuple12)
+
+
+
+        tuple3 = Tuple(3, 7, (15, 'Bachelors'), ())
+        cluster3 = Cluster(tuple3, "easy_data")
+
+        castle = Castle([tuple3], 2, 5, 2, 'easy_data')
+
+
+
+        tuple6 = Tuple(7, 5, (12, 'Bachelors'), ())
+
+        castle.anonymized_clusters = {cluster1 }
+        castle.not_anonymized_clusters = {cluster3, cluster2, cluster4, cluster1}
+        castle.delay_constraint(tuple3)
+        self.assertEqual(len(castle.anonymized_clusters), 1)
 
 
 class TestSplitMethods(unittest.TestCase):
@@ -120,7 +193,7 @@ class TestSplitMethods(unittest.TestCase):
 
         self.assertEqual(len(result), 2)
 
-    def test_split_cluster(self):
+    def test_split_cluster2(self):
         tupel_liste = [(1, 1, 18, 'Bachelors'), (2, 2, 20, 'Masters'), (3, 1, 18, 'Bachelors'), (5, 4, 24, 'Ph.D.'),
                        (6, 5, 17, 'Bachelors'), (8, 2, 20, 'Masters')]
         data = Data(tupel_liste, [2, 4], [])

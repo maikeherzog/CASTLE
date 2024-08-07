@@ -1,0 +1,101 @@
+Time,Person Id,Age,Education
+0,0,52,Secondary School
+1,1,51,Bachelors
+2,2,61,Ph.D
+3,3,51,Bachelors
+4,4,87,Ph.D
+5,5,41,Ph.D
+6,6,107,Ph.D
+7,7,46,Ph.D
+8,8,48,Secondary School
+9,9,42,Masters
+10,10,84,Masters
+11,11,77,Masters
+12,12,54,Ph.D
+13,13,79,Secondary School
+14,14,119,Primary School
+15,15,99,Masters
+16,16,65,Secondary School
+17,17,113,Bachelors
+18,18,34,Masters
+19,19,89,Ph.D
+20,20,37,Primary School
+21,21,95,Primary School
+22,22,119,Bachelors
+23,23,26,Masters
+24,24,21,Bachelors
+25,25,74,Bachelors
+26,26,36,Ph.D
+27,27,34,Bachelors
+28,28,34,Primary School
+29,29,114,Ph.D
+30,30,65,Secondary School
+31,31,69,Primary School
+32,32,117,Ph.D
+33,33,30,Masters
+34,34,101,Primary School
+35,35,32,Ph.D
+36,36,89,Primary School
+37,37,83,Primary School
+38,38,19,Ph.D
+39,39,113,Masters
+40,40,31,Masters
+41,41,39,Bachelors
+42,42,106,Primary School
+43,43,32,Masters
+44,44,103,Bachelors
+45,45,105,Bachelors
+46,46,77,Ph.D
+47,47,88,Bachelors
+48,48,111,Bachelors
+49,49,111,Secondary School
+50,50,112,Primary School
+51,51,28,Masters
+52,52,62,Secondary School
+53,53,83,Secondary School
+54,54,46,Primary School
+55,55,108,Ph.D
+56,56,85,Ph.D
+57,57,116,Ph.D
+58,58,20,Bachelors
+59,59,106,Primary School
+60,60,67,Masters
+61,61,38,Secondary School
+62,62,118,Bachelors
+63,63,119,Primary School
+64,64,76,Masters
+65,65,24,Bachelors
+66,66,104,Ph.D
+67,67,114,Masters
+68,68,120,Ph.D
+69,69,39,Bachelors
+70,70,118,Bachelors
+71,71,29,Bachelors
+72,72,19,Primary School
+73,73,26,Secondary School
+74,74,69,Ph.D
+75,75,83,Secondary School
+76,76,18,Secondary School
+77,77,26,Masters
+78,78,19,Bachelors
+79,79,57,Ph.D
+80,80,63,Primary School
+81,81,21,Bachelors
+82,82,100,Ph.D
+83,83,97,Primary School
+84,84,51,Bachelors
+85,85,33,Masters
+86,86,88,Bachelors
+87,87,72,Primary School
+88,88,97,Ph.D
+89,89,90,Bachelors
+90,90,45,Bachelors
+91,91,108,Secondary School
+92,92,53,Primary School
+93,93,98,Masters
+94,94,50,Masters
+95,95,24,Primary School
+96,96,117,Bachelors
+97,97,116,Ph.D
+98,98,46,Primary School
+99,99,106,Bachelors
