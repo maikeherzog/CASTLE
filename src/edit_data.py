@@ -1,10 +1,6 @@
 import csv
-
-import pandas as pd
-
 from src.hierarchy_tree import *
-
-# Definition der Attributeigenschaften
+"""Dictionary for defining the domains of different attributes across various datasets."""
 attribute_properties = {
     "adult":{
         0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
@@ -26,23 +22,6 @@ attribute_properties = {
     "easy_data":{
         0: {'name': 'age', 'type': 'continuous', 'interval': (18, 120)},
         1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_easy}
-    },
-    "adult_sorted":{
-        0: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
-        1: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
-        2: {'name': 'hours-per-week', 'type': 'continuous', 'interval': (1, 99)},
-        3: {'name': 'capital-loss', 'type': 'continuous', 'interval': (0, 4356)},
-        4: {'name': 'capital-gain', 'type': 'continuous', 'interval': (0, 99999)},
-        5: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
-        6: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
-        7: {'name': 'race', 'type': 'cathegorical', 'hierarchy_tree': race_tree},
-        8: {'name': 'relationship', 'type': 'cathegorical', 'hierarchy_tree': relationship_tree},
-        9: {'name': 'marital-status', 'type': 'cathegorical', 'hierarchy_tree': marital_status_tree},
-        10: {'name': 'workclass', 'type': 'cathegorical', 'hierarchy_tree': workclass_tree},
-        11: {'name': 'occupation', 'type': 'cathegorical', 'hierarchy_tree': occupation_tree},
-        12: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree},
-        13: {'name': 'native-country', 'type': 'cathegorical', 'hierarchy_tree': native_country_tree},
-        14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
     },
     "adult_castle":{
         0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
@@ -95,7 +74,7 @@ attribute_properties = {
         13: {'name': 'sex', 'type': 'cathegorical', 'hierarchy_tree': sex_tree},
         14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
     },
-    "adult_castle_diff_tree":{
+    "adult_castle_binary_tree":{
             0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
             1: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
             2: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
@@ -113,7 +92,7 @@ attribute_properties = {
             14: {'name': 'income', 'type': 'class', 'attributes': [' <=50K', ' >50K']},
 
     },
-    "adult_castle_diff_tree_short":{
+    "adult_castle_binary_tree_short":{
             0: {'name': 'age', 'type': 'continuous', 'interval': (17, 90)},
             1: {'name': 'fnlwgt', 'type': 'continuous', 'interval': (13769, 1484705)},
             2: {'name': 'education_num', 'type': 'continuous', 'interval': (1, 16)},
@@ -150,11 +129,14 @@ attribute_properties = {
     },
 }
 
-"""attribute_properties_test = {
-    0: {'name': 'age', 'type': 'continuous', 'interval': (18, 120)},
-    1: {'name': 'education', 'type': 'cathegorical', 'hierarchy_tree': education_tree_test}
-}"""
+""" Functions for editing csv data files. """
 def edit_data(path_from, path_to):
+    """
+    Cleans up the data in the file at path_from and writes the cleaned data to a new file at path_to.
+    :param path_from (str): the path to the file to clean up (.data file)
+    :param path_to (str): the path to the file to write the cleaned data to
+    :return: None
+    """
     # Open the .data file for reading
     with open(path_from, 'r') as f:
         lines = f.readlines()
@@ -188,7 +170,12 @@ def edit_data(path_from, path_to):
     print(f"Clean-up completed and the data was written to a new file with the path {path_to}.")
 
 def edit_data_sorted(path_from, path_to):
-    # Spalten in der gewünschten Reihenfolge
+    """
+    Cleans up the data in the file at path_from and writes the cleaned data to a new file at path_to.
+    :param path_from (str): the path to the file to clean up (.data file)
+    :param path_to (str): the path to the file to write the cleaned data to
+    :return: None
+    """
     header = "pid, time, age, fnlwgt, education-num, capital-gain, capital-loss, hours-per-week, workclass, education, marital-status, occupation, relationship, race, sex, native-country, income"
     header_list = [x.strip() for x in header.split(",")]
 
@@ -204,10 +191,10 @@ def edit_data_sorted(path_from, path_to):
         if '?' not in line and line.strip():
             line_data_dict = dict(zip(header_list, [x.strip() for x in line.split(",")]))
 
-            # Zusammenstellen der Daten in der gewünschten Reihenfolge
+            # Arrange the data in the desired order
             reordered_data = [line_data_dict[column_name] for column_name in header_list]
 
-            # Umwandeln der Liste in einen String und Hinzufügen zur Ausgabeliste
+            # Convert the list into a string and add to the output list
             cleaned_line = ",".join(reordered_data)
             cleaned_lines.append(cleaned_line)
 
@@ -228,6 +215,12 @@ def edit_data_sorted(path_from, path_to):
     print(f"Clean-up completed and the data was written to a new file with the path {path_to}.")
 
 def process_tuple(tuple_data, attribute_properties):
+    """
+    Processes a tuple according to the attribute properties.
+    :param tuple_data (list): the tuple data
+    :param attribute_properties (dict): the attribute properties
+    :return: the processed tuple
+    """
     processed_tuple = []
     print(enumerate(tuple_data))
     for i, value in enumerate(tuple_data):
@@ -235,23 +228,29 @@ def process_tuple(tuple_data, attribute_properties):
 
         if attribute_type == 'continuous':
             interval = attribute_properties[i]['interval']
-            # Berechne den Unterschied zwischen dem Maximalwert des Intervalls und dem Wert aus dem Tupel
-            processed_value = interval[1] - value  # Hier wird das Intervall verwendet
+            processed_value = interval[1] - value
         else:
-            processed_value = value  # Für kategoriale Attribute, mache hier deine spezifische Verarbeitung
+            processed_value = value
 
         processed_tuple.append(processed_value)
 
     return processed_tuple
 
 def switch_cols(csv_datei, path_for_save, new_order):
+    """
+    Switches the columns of a csv file according to the new order.
+    :param csv_datei (str): the path to the csv file
+    :param path_for_save (str): the path to save the new csv file
+    :param new_order (list): the new order of the columns
+    :return: None
+    """
     with open(csv_datei, 'r') as file:
         daten = csv.reader(file)
-        neue_daten = []
-        for zeile in daten:
-            neue_zeile = [zeile[i] for i in new_order]
-            neue_daten.append(neue_zeile)
+        new_data = []
+        for line in daten:
+            new_line = [line[i] for i in new_order]
+            new_data.append(new_line)
 
     with open(path_for_save, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerows(neue_daten)
+        writer.writerows(new_data)
