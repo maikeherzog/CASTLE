@@ -4,17 +4,27 @@ import math
 import random
 import logging
 
-import sys
-
 from src.Cluster import Cluster
 from src.HeapElement import HeapElement
 from src.edit_data import attribute_properties
 from src.tree_functions import count_all_leaves, find_generalization, get_subtree, is_leaf_node, get_leaf_nodes
 
+# config for logger
 logging.basicConfig(filename='castle_algo_ILoss_qi_2-10__32000__10000_50_adult_mix_reverse.log', level=logging.INFO)
 logger = logging.getLogger()
 class Castle:
+    """
+    A class to represent the Castle algorithm.
+    """
     def __init__(self, stream, k, delta, beta, name_dataset):
+        """
+        Constructor of the Castle class.
+        :param stream (list of Tuple): the stream of tuples
+        :param k (int): the k-anonymity parameter
+        :param delta (int): the delay constraint
+        :param beta (int): Threshold for non-annonymous clusters
+        :param name_dataset (str): the name of the dataset
+        """
         self.not_anonymized_clusters = set()
         self.anonymized_clusters = set()
         self.tao = 0
@@ -34,43 +44,51 @@ class Castle:
 
 
     def set_pos_stream(self, pos_stream):
+        """
+        Sets the position of the stream.
+        :param pos_stream (int): the position of the stream
+        """
         self.pos_stream = pos_stream
 
     def castle_algo(self, S):
+        """
+        The Castle algorithm.
+        :param S (list of Tuple): the stream of tuples
+        :return: None
+        """
+        # logging before
         logger.info(f'Starte Castle Algorithmus mit k={self.k}, delta={self.delta}, beta={self.beta}, name_dataset={self.name_dataset}, len_qi={len(S[0].qi)}, example_qi = {S[0].qi}, Anzahl anonyme CLuster: {len(self.anonymized_clusters)}, Anzahl nicht anonyme Cluster: {len(self.not_anonymized_clusters)}, Anzahl alle Cluster:{self.num_cluster}')
         while self.stream and self.pos_stream < len(self.stream):
             print("pos_stream", self.pos_stream)
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
-            #print("____________________________________________________________________________________________________")
-            #print("Tuple", next_tupel.qi)
+
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
-                #print(f"best_cluster for {next_tupel.qi} is None")
                 new_cluster = Cluster(next_tupel, self.name_dataset)
                 self.not_anonymized_clusters.add(new_cluster)
                 best_cluster = new_cluster
-                #print(f"new cluster {new_cluster.t} added to not_anonymized_clusters")
             else:
                 best_cluster.add_tupel(next_tupel)
-                #print(f"tupel {next_tupel.qi} added to cluster {best_cluster.t}")
 
             if self.pos_stream - self.delta < 0:
                 tuple_prime = None
             else:
-                #print("Tuple_prime:", S[self.pos_stream - self.delta].qi)
                 tuple_prime = S[self.pos_stream - self.delta]
 
-            if tuple_prime not in self.output and tuple_prime is not None: #hier prüfen, ob es schon ausgegeben wurde
+            if tuple_prime not in self.output and tuple_prime is not None:
                 self.delay_constraint(tuple_prime)
 
             self.pos_stream += 1
+        #logging after
         logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Durchschnittlicher ILoss über Cluster:{self.average_loss_all_clusters()}, InfoLoss anonymisierte Cluster: {self.average_Loss_all_ano_cluster()}')
 
     def delay_constraint(self, tuple_prime):
-        #print('delay_constraint')
+        """
+        The delay constraint.
+        :param tuple_prime (Tuple): the tuple to check
+        """
         #find tuple prime in not_anonymized_clusters
         cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
-        #if len(cluster_of_tuple_prime) >= self.k:
         if cluster_of_tuple_prime.is_k_anonymous(self.k):
             self.output_cluster(cluster_of_tuple_prime)
         elif self.get_num_of_all_pids() < self.k:
@@ -78,7 +96,7 @@ class Castle:
             return
         else:
             KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
-            # prüfen ob KC_set nicht leer ist
+            # check whether KC_set is not empty
             if KC_set:
                 KC = random.choice(list(KC_set))
                 self.output_anonymized_cluster(KC, tuple_prime)
@@ -90,14 +108,13 @@ class Castle:
                     m = m+1
             if m > (len(self.not_anonymized_clusters)/2):
                 # suppress tuple prime
-                #print("Suppress Tuple")
                 self.suppress_tuple(tuple_prime)
                 return
             if sum(len(cluster) for cluster in self.not_anonymized_clusters) < self.k:
                 # suppress tuple prime
                 self.suppress_tuple(tuple_prime)
                 return
-            # entfernt das beste Cluster aus den nicht anonymisierten Clustern um dann die merge Funktion aufrufen zu können
+            # removes the best cluster from the non-anonymised clusters in order to be able to call the merge function
             clusters_without_best_cluster = copy.deepcopy(self.not_anonymized_clusters)
 
             for i in clusters_without_best_cluster:
@@ -109,11 +126,18 @@ class Castle:
 
 
     def suppress_tuple(self, tuple):
-        #print("Suppress Tuple", tuple.qi)
+        """
+        Suppresses a tuple.
+        :param tuple (Tuple): the tuple to suppress
+        """
         self.stream.remove(tuple)
         self.pos_stream -= 1
 
     def get_num_of_all_pids(self):
+        """
+        Get the amount of all person-IDs in the stream.
+        :return: the number of all person-IDs in the stream
+        """
         pids = set()
         for cluster in self.not_anonymized_clusters:
             for tupel in cluster.data:
@@ -121,16 +145,23 @@ class Castle:
         return len(pids)
 
     def output_anonymized_cluster(self, cluster, tuple):
+        """
+        Outputs a tuple from an anonymized cluster.
+        :param cluster (Cluster): cluster for tuple
+        :param tuple (Tuple): the tuple to output
+        """
         output = cluster.output_single_tuple(tuple)
         self.output.append(tuple)
         self.anonymized_clusters_InfoLoss.append(self.InfoLoss(output.qi))
 
     def output_cluster(self, cluster):
-        #print("Output Cluster Funktion")
+        """
+        Outputs a cluster.
+        :param cluster (Cluster): the cluster to output
+        """
         num_pids = len(cluster.group_tuples_by_pid())
         if len(cluster) >= 2 * self.k  and num_pids >= 2*self.k:
             split_cluster = self.split(cluster)
-            #self.not_anonymized_clusters.remove(cluster)
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
         else:
@@ -163,6 +194,11 @@ class Castle:
 
 
     def split(self, cluster):
+        """
+        Splits a cluster.
+        :param cluster (Cluster): the cluster to split
+        :return: list of split clusters
+        """
         split_cluster = set()
         BS = cluster.group_tuples_by_pid()
         while len(BS) >= self.k:
@@ -170,7 +206,6 @@ class Castle:
             selected_tuple = random.choice(BS[selected_bucket])
             new_cluster = Cluster(selected_tuple, self.name_dataset)
 
-            # Lösche das ausgewählte Tupel aus BS
             BS[selected_bucket].remove(selected_tuple)
             if not BS[selected_bucket]:
                 del BS[selected_bucket]
@@ -195,45 +230,40 @@ class Castle:
         return split_cluster
 
     def initialize_heap(self, tuple):
+        """
+        Initializes the heap.
+        :param tuple (Tuple): the tuple to initialize the heap
+        :return: the heap
+        """
         H = []
-
-        # Füge k-1 Knoten hinzu, jedes mit unendlicher Distanz zu selected_tuple
         for _ in range(self.k - 1):
-            # Annahme: Der Knoten ist hier nur repräsentiert als Index (z.B. die Knoten könnten anschließend als 'Knoten 1', 'Knoten 2', etc. behandelt werden)
-            # Du könntest stattdessen eigene Knotenobjekte o.ä. hinzufügen
             node = len(H)
-
-            # Mit 'sys.maxsize' setzen wir die Distanz initial auf 'unendlich'
             distance = float('inf')
-
-            # Die heapq-Bibliothek erlaubt es nur Min-Heap zu bauen,
-            # deswegen nehmen wir -1*distance, um einen Max-Heap zu simulieren, da es nach der Beschreibung aussieht, dass du einen Max-Heap willst
             H.append(HeapElement(distance * (-1), node))
-
-        # Heapfify ist eine Funktion, die eine Liste in-place in einen Heap umwandelt.
         heapq.heapify(H)
-
         return H
 
     def merge_cluster(self, cluster, set_of_clusters):
-        #print("merge Cluster Funktion")
-        # set_of clusters besteht aus non_anonymized_clusters
-        #while len(cluster) < self.k or len(cluster.group_tuples_by_pid()) < self.k:
+        """
+        Merges a cluster with another cluster.
+        :param cluster (Cluster): the cluster to merge
+        :param set_of_clusters (set of Cluster): the set of other clusters for merge options
+        :return: the merged cluster
+        """
         is_cluster_k_ano = cluster.is_k_anonymous(self.k)
         while not is_cluster_k_ano:
             min_enlargement = float('inf')
 
             for c in set_of_clusters:
-                # berechnung der potentiellen Größe des gemergeden Clusters
+                # Calculation of the potential size of the merged cluster
                 merged_size = len(cluster) + len(c)
 
-                # berechnung des Enlargement
                 enlargement = self.Enlargement(cluster, c.make_tuple_from_qi(c.t))
 
                 if enlargement < min_enlargement:
                     min_enlargement = enlargement
                     min_enlargement_cluster = c
-            # fügt die Tupel des min_enlargement_cluster zu cluster hinzu
+            # adds the tuples of the min_enlargement_cluster to cluster
             for tupel in min_enlargement_cluster.data:
                 cluster.add_tupel(tupel)
 
@@ -248,26 +278,26 @@ class Castle:
                     break
 
             is_cluster_k_ano = cluster.is_k_anonymous(self.k)
-        #self.not_anonymized_clusters.add(cluster)
         return cluster
 
     def best_selection(self, tuple)-> Cluster:
-        #print("best selection Funktion")
+        """
+        Selects the best cluster for a tuple.
+        :param tuple (Tuple): the tuple to select the best cluster
+        :return: the best cluster
+        """
         enlargements = set()
         if not self.not_anonymized_clusters:
             return None
-        # Möglichkeit mit List-Comprehension darstellen:
-        # enlargements = set([Enlargement(cluster, tuple) for cluster in not_anonymized_clusters])
+
         for cluster in self.not_anonymized_clusters:
             enlargement = self.Enlargement(cluster, tuple)
             enlargements.add(enlargement)
         min_enlargement = min(enlargements)
 
-        # Set of clusters C' in not_anonymized_clusters with Enlargement(C', tupel) = min
         set_cluster_min = [C for C in self.not_anonymized_clusters if self.Enlargement(C, tuple) == min_enlargement]
         set_c_ok = set()
         for cluster in set_cluster_min:
-            #IL_cluster = self.InfoLoss(cluster.t)
             IL_cluster = self.Enlargement(cluster, tuple)
             if IL_cluster <= self.tao:
                 set_c_ok.add(cluster)
@@ -279,17 +309,13 @@ class Castle:
         else:
             return min(set_c_ok, key=lambda cluster: len(cluster))
 
-    def Enlargement(self, cluster, tupel) -> float:
+    def Enlargement(self, cluster, tupel):
         """
-          This function calculates the enlargement of a cluster C with respect to a tuple t.
-
-          Args:
-              cluster: A cluster represented as a list of tuples.
-              tupel: A tuple.
-
-          Returns:
-              A number representing the enlargement of a cluster with respect to t.
-          """
+        Calculates the enlargement of a cluster.
+        :param cluster (Cluster): the cluster to calculate the enlargement
+        :param tupel (Tuple): the tuple to be inserted
+        :return: the enlargement of the cluster
+        """
         n = len(cluster.t)  # Assuming all tuples in C have the same length
         enlarged_cluster = copy.deepcopy(cluster)
         enlarged_cluster.add_tupel(tupel)
@@ -306,6 +332,11 @@ class Castle:
         return 1 / n * sum_iloss_enlarged_cluster - 1 / n * sum_iloss_cluster
 
     def InfoLoss(self, cluster):
+        """
+        Calculates the InfoLoss of a cluster.
+        :param cluster (Cluster): the cluster to calculate the InfoLoss
+        :return: the InfoLoss of the cluster
+        """
         n = len(cluster)
         sum = 0
         for att_pos in range(n):
@@ -313,6 +344,11 @@ class Castle:
         return 1 / n * sum
 
     def InfoLoss_tupel(self, tupel):
+        """
+        Calculates the InfoLoss of a tuple.
+        :param tupel (Tuple): the tuple to calculate the InfoLoss
+        :return: the InfoLoss of the tuple
+        """
         n = len(tupel)
         sum = 0
         for att_pos in range(n):
@@ -320,6 +356,11 @@ class Castle:
         return 1 / n * sum
 
     def InfoLoss_anonymized_cluster(self, clusters):
+        """
+        Calculates the InfoLoss of an anonymized cluster.
+        :param clusters (set of Cluster): the cluster to calculate the InfoLoss
+        :return: the InfoLoss of the cluster
+        """
         for cluster in clusters:
             n = len(cluster.t)
             sum = 0
@@ -330,6 +371,11 @@ class Castle:
 
 
     def add_tupel(self, cluster, tupel):
+        """
+        Adds a tuple to a cluster.
+        :param cluster (Cluster): the cluster to add the tuple
+        :param tupel (Tuple): the tuple to add
+        """
         new_cluster = list(cluster)
         for i in range(len(cluster) - 1):
             if attribute_properties[self.name_dataset][i]['type'] == 'continuous':
@@ -341,8 +387,13 @@ class Castle:
         return tuple(new_cluster)
 
     def adjust_interval(self, value, interval):
-
-        # Wenn value ein Intervall ist und Intervall nur eine Zahl (kann bei merge Cluster vorkommen
+        """
+        Adjusts an interval.
+        :param value (int or list or tuple): the value to adjust
+        :param interval (int or list or tuple): the interval to adjust
+        :return: the adjusted interval
+        """
+        # If value is an interval and interval is a number
         if isinstance(value, (list, tuple)) and isinstance(interval, int):
             if value[0] > interval:
                 return [interval, value[1]]
@@ -351,18 +402,18 @@ class Castle:
             else:
                 return value
 
-        # wenn beides Intervalle sind
+        # if both are intervals
         if isinstance(value, (list, tuple)) and isinstance(interval, (list, tuple)):
             return [min(value[0], interval[0]), max(value[1], interval[1])]
 
-        # Wenn das Intervall nur eine einzelne Zahl enthält
+        # If the interval only contains a single number
         if isinstance(interval, int) and isinstance(value, int):
             if value < interval:
                 return [value, interval]
             else:
                 return [interval, value]
 
-        # Wenn das Intervall ein normaler Bereich ist
+        # If the interval is a normal range
         else:
             lower_bound, upper_bound = interval
 
@@ -374,15 +425,33 @@ class Castle:
             return [lower_bound, upper_bound]
 
     def add_unique_string_to_list(self, value, value_list):
+        """
+        Adds a unique string to a list.
+        :param value (str): the value to add
+        :param value_list (list): the list to add the value
+        :return: the list with the added value
+        """
         if value not in value_list:
             value_list.append(value)
         return value_list
 
     def is_in_interval(self, value, interval):
+        """
+        Checks if a value is in an interval.
+        :param value (int): the value to check
+        :param interval (list or tuple): the interval to check
+        :return: True if the value is in the interval, False otherwise
+        """
         lower_bound, upper_bound = interval
         return lower_bound <= value <= upper_bound
 
-    def VInfoLoss(self, attribut, pos) -> int:
+    def VInfoLoss(self, attribut, pos):
+        """
+        Calculates the VInfoLoss of an attribute.
+        :param attribut: attribute to calculate the VInfoLoss
+        :param pos (int): the position of the attribute
+        :return: the VInfoLoss of the attribute
+        """
         info_loss = 0
         if attribute_properties[self.name_dataset][pos]['type'] == 'continuous':
             info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[self.name_dataset][pos]['interval'])
@@ -393,14 +462,25 @@ class Castle:
 
 
     def VInfoLoss_continuos(self, attribut_range, domain_range):
+        """
+        Calculates the VInfoLoss of a continuous attribute.
+        :param attribut_range (int or list): the range of the attribute
+        :param domain_range (list): the range of the domain
+        :return: the VInfoLoss of the continuous attribute
+        """
         if isinstance(attribut_range, int):
-            #return attribut_range / (domain_range[1] - domain_range[0])
             return 0
         if len(attribut_range) == 1:
             return 0
         return (attribut_range[1] - attribut_range[0]) / (domain_range[1] - domain_range[0])
 
     def VInfoLoss_cathegorical(self, attribut_range, domain_tree):
+        """
+        Calculates the VInfoLoss of a categorical attribute.
+        :param attribut_range (str or list): the range of the attribute
+        :param domain_tree (dict): the domain tree
+        :return: the VInfoLoss of the categorical attribute
+        """
         domain_range = count_all_leaves(domain_tree)
 
         if isinstance(attribut_range, str):
@@ -416,6 +496,10 @@ class Castle:
 
 
     def average_Loss(self):
+        """
+        Calculates the average loss.
+        :return: the average loss over the last clusters
+        """
         if len(self.anonymized_clusters_InfoLoss) == 0:
             return 0
         else:
@@ -426,17 +510,31 @@ class Castle:
 
 
     def average_Loss_all(self):
+        """
+        Calculates the average loss over all anonymized clusters.
+        :return: the average loss
+        """
         if len(self.anonymized_clusters_InfoLoss) == 0:
             return 0
         else:
             return (1/len(self.anonymized_clusters_InfoLoss)) * sum(self.anonymized_clusters_InfoLoss)
 
     def average_loss_all_clusters(self):
+        """
+        Calculates the average loss over all clusters.
+        :return: the average loss
+        """
         if len(self.all_cluster_Iloss) == 0:
             return 0
         else:
             return (1/len(self.all_cluster_Iloss)) * sum(self.all_cluster_Iloss)
-    def calculate_tuple_distance(self, tuple1, tuple2) -> float:
+    def calculate_tuple_distance(self, tuple1, tuple2):
+        """
+        Calculates the distance between two tuples.
+        :param tuple1 (Tuple): the first tuple
+        :param tuple2 (Tuple): the second tuple
+        :return: the distance between the two tuples
+        """
         num_diff = 0
         str_diff = 0
         for i in range(len(tuple1.qi)):
@@ -447,11 +545,19 @@ class Castle:
         return math.sqrt(num_diff ** 2 + str_diff ** 2) * (-1)
 
     def get_recent_InfoLoss(self):
+        """
+        Gets the recent InfoLoss.
+        :return: the recent InfoLoss
+        """
         start_index = max(0, len(self.anonymized_clusters_InfoLoss) - self.mu)
         recent_info_loss = self.anonymized_clusters_InfoLoss[start_index:]
         return recent_info_loss
 
     def average_Loss_all_ano_cluster(self):
+        """
+        Calculates the average loss over all anonymized clusters.
+        :return: the average loss over all anonymized clusters
+        """
         if len(self.anonymized_clusters_InfoLoss_only_cluster) == 0:
             return 0
         else:
