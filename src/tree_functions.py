@@ -1,7 +1,12 @@
-from typing import List, Optional
-
-
+"""
+This module provides functions for working with tree structures.
+"""
 def get_leaf_nodes(tree):
+    """
+    Returns a list of all leaf nodes in the tree.
+    :param tree (dict): the tree
+    :return: a list of all leaf nodes in the tree
+    """
     leaf_nodes = []
 
     if 'children' not in tree:
@@ -13,9 +18,20 @@ def get_leaf_nodes(tree):
     return leaf_nodes
 
 def count_all_leaves(tree):
+    """
+    Gets the number of all leaf nodes in the tree.
+    :param tree (dict): the tree
+    :return: the number of all leaf nodes in the tree
+    """
     return len(get_leaf_nodes(tree))
 
 def get_subtree(tree, root_name):
+    """
+    Gets the subtree with the given root name.
+    :param tree (dict): the tree
+    :param root_name (str): the name of the root node of the subtree
+    :return: the subtree with the given root name
+    """
     if tree['name'] == root_name:
         return tree
 
@@ -29,7 +45,12 @@ def get_subtree(tree, root_name):
 
 
 def is_leaf_node(tree, node_name):
-    # Sucht nach dem Knoten mit dem gegebenen Namen im Baum
+    """
+    Checks if the given node is a leaf node.
+    :param tree (dict): the tree
+    :param node_name (str): the name of the node to check
+    :return: True if the node is a leaf node, False otherwise
+    """
     def search_node(tree, node_name):
         if tree['name'] == node_name:
             return tree
@@ -43,7 +64,7 @@ def is_leaf_node(tree, node_name):
     node = search_node(tree, node_name)
 
     if node is None:
-        return f'Knoten {node_name} nicht gefunden im Baum.'
+        return f'Node {node_name} not found in tree.'
 
     if 'children' in node:
         return False
@@ -51,7 +72,19 @@ def is_leaf_node(tree, node_name):
         return True
 
 def find_generalization(tree, node_list):
+    """
+    Finds the common ancestor of the given nodes in the tree.
+    :param tree (dict): the tree
+    :param node_list (list): the list of nodes to find the common ancestor for
+    :return (str): the common ancestor of the given nodes
+    """
     def find_path(node, target):
+        """
+        Finds the path from the root node to the target node.
+        :param node (dict): the current node
+        :param target (str): the target node
+        :return (list): the path from the root node to the target node
+        """
         if node['name'] == target:
             return [node['name']]
 
@@ -63,6 +96,11 @@ def find_generalization(tree, node_list):
         return None
 
     def find_common_ancestor(paths):
+        """
+        Finds the common ancestor of the given paths.
+        :param paths (list): the list of paths
+        :return (str): the common ancestor of the given paths
+        """
         common_ancestor = paths[0]
         for path in paths[1:]:
             i = 0
