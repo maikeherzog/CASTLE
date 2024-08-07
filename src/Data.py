@@ -1,12 +1,17 @@
 from src.Tupel import Tuple
 
-
 class Data:
+    """
+    A class to represent a stream of tuples.
+    """
     def __init__(self, data, qi_index, sa_index):
+        """
+        Constructor of the Data class.
+        :param data:
+        :param qi_index:
+        :param sa_index:
+        """
         self.data = self.data_from_stream(data, qi_index, sa_index)
-
-    def get_data(self):
-        return self.data
 
     @staticmethod
     def data_from_stream(stream, qi_index, sa_index):
@@ -26,8 +31,6 @@ class Data:
         for item in stream:
             pid = item[0]
             time = item[1]
-            """qi = tuple(item[i] for i in qi_index)
-            sa = tuple(item[i] for i in sa_index)"""
 
             qi = tuple(item[i] for i in range(qi_index[0], qi_index[1]))
             sa = []
