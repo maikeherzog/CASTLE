@@ -1,3 +1,5 @@
+""" This file contains the hierarchy trees for the different attributes. """
+
 relationship_tree = {
     'name': 'Any Relationship',
     'children': [
