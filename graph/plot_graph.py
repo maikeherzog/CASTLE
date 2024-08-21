@@ -275,7 +275,7 @@ def plot_multiple_curves_sns(x_values, y_values_list, colors, labels, title, xla
 
 # Beispielaufruf
 
-colors = ['red', 'blue', 'green', 'purple', 'orange']
+colors = ['#666666', 'blue', 'orange', 'purple', 'green']
 labels = ['CASTLE_original', 'adult_castle', 'castle_reverse', 'castle_mix']
 title = 'Informationsverlust bei verschiedenen großen QI Mengen'
 xlabel = '|QI|'
@@ -378,7 +378,7 @@ y_values_list_fads = [
 ]
 filename_fads = 'QI_ILoss_FADS.svg'
 labels_fads = ["castle_fads", "castle_reverse"]
-colors_fads = ['blue', 'green']
+colors_fads = ['blue', 'orange']
 plot_multiple_curves_sns(x_values_qi, y_values_list_fads, colors_fads, labels_fads, title, xlabel, ylabel, filename_fads, line_styles)
 
 #ILoss-QI alle Abstände castle
@@ -410,6 +410,7 @@ point_labels_list_all = [
 filename_all = 'QI_ILoss_castle_all_qi.svg'
 labels_all = ["adult_castle", "castle_reverse", "castle_mix"]
 xlabel_all = '|QI|'
+colors_all = ['blue', 'orange', 'purple', 'green']
 #ylabel = 'Y-Achse Label'
 title = ''
 
@@ -424,7 +425,7 @@ legend_labels = ['age', 'fnlwgt', 'education-num', 'capital-gain', 'capital-loss
 
 linestyles = ['-', '--', '-.']
 
-plot_multiple_curves_point_labels_new(x_values_qi_all, y_values_list_all, colors, labels_all, title, xlabel_all, ylabel, filename_all, rotation=False, point_labels_list=point_labels_list_all, symbols_list=symbols_list_all, legend_symbols=legend_symbols, legend_labels=legend_labels, linestyles=linestyles)
+plot_multiple_curves_point_labels_new(x_values_qi_all, y_values_list_all, colors_all, labels_all, title, xlabel_all, ylabel, filename_all, rotation=False, point_labels_list=point_labels_list_all, symbols_list=symbols_list_all, legend_symbols=legend_symbols, legend_labels=legend_labels, linestyles=linestyles)
 
 # CSV-Datei einlesen
 df = pd.read_csv('../data/adult_castle.csv')

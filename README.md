@@ -29,7 +29,14 @@ Dieses Projekt implementiert den CASTLE (Continuously Anonymizing Streaming data
    ```   git clone```
 
 ## Nutzung
-1. Führen Sie die Datei `main.py` aus:
+1. Passen Sie in der `main.py` den Pfad zu ihrem Datensatz an. (Der Datensatz sollte als csv Datei vorliegen)
+2. Geben Sie die Anzahl der Zeilen an, die eingelesen werden sollen von ihrem Datensatz.
+3. Lesen Sie die CSV Datei ein mit `pd.read_csv()`.
+4. Listen Sie die eingelesenen Dataframes auf.
+5. Bestimmen Sie durch umwandlung der Daten die Quasi-Identifikatoren und die sensiblen Attribute mit der Klasse `Data`.
+6. Erstellen Sie eine Instanz der Klasse `Castle` und übergeben Sie neben den eben erstellten Daten die Parameter `k`, `beta`, `delta`, `stream` und `name_dataset`.
+7. Rufen Sie die Funktion `castle_algo()` auf.
+2. Führen Sie die Datei `main.py` aus:
    ```python main.py```
 
 ## Beispiele
@@ -66,6 +73,7 @@ castle/
 ├── graph                     # Ordner für die Erstellung der Auswertungsdiagramme
 │   ├── hist_plot.py/         # Funktionen zur erstellung der Histogramme
 │   ├── plot_graph.py/        # Funktionen zur Erstellung der Graphen
+│   ├── log_Ergebnisse.zip/   # Zip Datei mit den Logdateien aus den Simulationen
 │   ├── diverse Auswertungsdiagramme
 │
 ├── test/                     # Testdateien
