@@ -89,7 +89,7 @@ castle/
 ```
 
 ## Bekannte Probleme
-- ***Reihenfolge der Attribute:*** Die aktuelle Implementierung erfordert, dass die Reihenfolge der Attribute in den Datensätzen exakt definiert ist. Dies kann bei komplexen Datensätzen zu Problemen führen.
+- ***Reihenfolge der Attribute:*** Die aktuelle Implementierung erfordert, dass die Reihenfolge der Attribute in den Datensätzen exakt definiert ist. 
 - ***Generalisierungshierarchie:*** Die Generalisierungshierarchie für kategorische Attribute muss händisch definiert werden. 
 
 ## Zukünftige Arbeiten
