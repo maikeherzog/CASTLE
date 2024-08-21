@@ -29,7 +29,7 @@ Dieses Projekt implementiert den CASTLE (Continuously Anonymizing Streaming data
    ```git clone```
 
 ## Nutzung
-1. Passen Sie in der `main.py` den Pfad zu ihrem Datensatz an. (Der Datensatz sollte als csv Datei vorliegen)
+1. Passen Sie in der `main.py` den Pfad zu ihrem Datensatz an. (Der Datensatz sollte als CSV Datei vorliegen)
 2. Geben Sie die Anzahl der Zeilen an, die eingelesen werden sollen von ihrem Datensatz.
 3. Lesen Sie die CSV Datei ein mit `pd.read_csv()`.
 4. Listen Sie die eingelesenen Dataframes auf.
