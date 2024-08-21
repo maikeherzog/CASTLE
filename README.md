@@ -26,7 +26,7 @@ Dieses Projekt implementiert den CASTLE (Continuously Anonymizing Streaming data
 - Python 3.8+
 ### Installation
 1. Klonen Sie das Repository:
-   ```   git clone```
+   ```git clone```
 
 ## Nutzung
 1. Passen Sie in der `main.py` den Pfad zu ihrem Datensatz an. (Der Datensatz sollte als csv Datei vorliegen)
