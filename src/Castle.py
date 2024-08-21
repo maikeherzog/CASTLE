@@ -62,22 +62,28 @@ class Castle:
             print("pos_stream", self.pos_stream)
             next_tupel = self.stream[self.pos_stream]  # Get the next tupel from S
 
+            # Find the best matching cluster for the current tuple
             best_cluster = self.best_selection(next_tupel)
             if best_cluster is None:
+                # If no suitable cluster is found, create a new cluster for this tuple
                 new_cluster = Cluster(next_tupel, self.name_dataset)
                 self.not_anonymized_clusters.add(new_cluster)
                 best_cluster = new_cluster
             else:
+                # If a suitable cluster is found, add the tuple to this cluster
                 best_cluster.add_tupel(next_tupel)
 
+            # Handle delay constraint: check if the tuple at (current position - delta) should be processed
             if self.pos_stream - self.delta < 0:
                 tuple_prime = None
             else:
                 tuple_prime = S[self.pos_stream - self.delta]
 
+            # If the tuple_prime exists and hasn't been output yet, apply the delay constraint
             if tuple_prime not in self.output and tuple_prime is not None:
                 self.delay_constraint(tuple_prime)
 
+            # Move to the next position in the stream
             self.pos_stream += 1
         #logging after
         logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Durchschnittlicher ILoss über Cluster:{self.average_loss_all_clusters()}, InfoLoss anonymisierte Cluster: {self.average_Loss_all_ano_cluster()}')
@@ -89,12 +95,16 @@ class Castle:
         """
         #find tuple prime in not_anonymized_clusters
         cluster_of_tuple_prime = next(cluster for cluster in self.not_anonymized_clusters if cluster.check_if_tuple_is_in_cluster(tuple_prime))
+
+        # If the cluster containing tuple_prime is k-anonymous, output this cluster
         if cluster_of_tuple_prime.is_k_anonymous(self.k):
             self.output_cluster(cluster_of_tuple_prime)
         elif self.get_num_of_all_pids() < self.k:
+            # If the number of all PIDs is less than k, suppress the tuple
             self.suppress_tuple(tuple_prime)
             return
         else:
+            # Find all anonymized clusters that the tuple can fit into based on its QIs
             KC_set = {cluster for cluster in self.anonymized_clusters if cluster.fits_in_cluster(tuple_prime.qi)}
             # check whether KC_set is not empty
             if KC_set:
@@ -121,6 +131,8 @@ class Castle:
                 if i.check_cluster_if_equal(cluster_of_tuple_prime):
                     clusters_without_best_cluster.remove(i)
                     break
+
+            # Merge the remaining non-anonymized clusters with the cluster containing tuple_prime
             MC = self.merge_cluster(cluster_of_tuple_prime, clusters_without_best_cluster)
             self.output_cluster(MC)
 
@@ -159,13 +171,20 @@ class Castle:
         Outputs a cluster.
         :param cluster (Cluster): the cluster to output
         """
+        # Get the number of unique PIDs in the cluster
         num_pids = len(cluster.group_tuples_by_pid())
+
+        # Check if the cluster size and number of PIDs meet the threshold to potentially split the cluster
         if len(cluster) >= 2 * self.k  and num_pids >= 2*self.k:
             split_cluster = self.split(cluster)
+            # Add the resulting clusters to the set of non-anonymized clusters
             for elem in split_cluster:
                 self.not_anonymized_clusters.add(elem)
         else:
+            # If the conditions for splitting are not met, treat the cluster as a single unit
             split_cluster = {cluster}
+
+        # Process and output each cluster in the split_clusters set
         for c in split_cluster:
             output_tuples = c.output_tuples()
             self.output.extend(c.data)
@@ -177,6 +196,7 @@ class Castle:
             logger.info(f'Cluster veröffentlicht, Nummer Cluster: {self.num_cluster}, aktuelles pos_stream: {self.pos_stream}, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Clustermuster: {c.t}, kompletter Durchschnittlicher ILoss: {self.average_Loss_all()}, Anzahl Tupel in Cluster:{len(c.data)} Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, InfoLoss Clustermuster:{self.InfoLoss(c.t)} ')
             self.all_cluster_Iloss.append(self.InfoLoss(c.t))
 
+            # Update the average information loss and check if the current cluster's information loss is less than the average
             self.tao = self.average_Loss()
             if self.InfoLoss(c.t) < self.tao:
                 self.anonymized_clusters.add(c)
@@ -189,6 +209,8 @@ class Castle:
             else:
                 pass
             self.not_anonymized_clusters.remove(c)
+
+        # Ensure the cluster is removed from the non-anonymized clusters set
         if (cluster in self.not_anonymized_clusters):
             self.not_anonymized_clusters.remove(cluster)
 
@@ -200,16 +222,23 @@ class Castle:
         :return: list of split clusters
         """
         split_cluster = set()
+
+        # Group the tuples in the cluster by their PID (personal identifier)
         BS = cluster.group_tuples_by_pid()
+
+        # While there are enough tuples in BS to potentially form new clusters
         while len(BS) >= self.k:
+            # Randomly select a bucket (PID group) and a tuple from it
             selected_bucket = random.choice(list(BS.keys()))
             selected_tuple = random.choice(BS[selected_bucket])
+            # Create a new cluster with the selected tuple
             new_cluster = Cluster(selected_tuple, self.name_dataset)
 
             BS[selected_bucket].remove(selected_tuple)
             if not BS[selected_bucket]:
                 del BS[selected_bucket]
 
+            # Create a heap to find the nearest tuples to the selected tuple
             heap = []
             for bucket in [b for b in BS if b != selected_bucket]:
                 tuple_from_bucket = random.choice(BS[bucket])
@@ -217,12 +246,16 @@ class Castle:
                 heapq.heappush(heap, (t_dist, random.random(), tuple_from_bucket))
                 while len(heap) > self.k - 1:
                     heapq.heappop(heap)
+
+            # Add the tuples from the heap to the new cluster
             for _,_, heap_element in heap:
                 new_cluster.add_tupel(heap_element)
                 BS[heap_element.pid].remove(heap_element)
                 if not BS[heap_element.pid]:
                     del BS[heap_element.pid]
+            # Add the newly formed cluster to the set of split clusters
             split_cluster.add(new_cluster)
+
         for tup in sum(BS.values(), []):
             closest_cluster = min(split_cluster, key=lambda cluster: self.Enlargement(cluster, tup))
             closest_cluster.add_tupel(tup)
@@ -250,16 +283,20 @@ class Castle:
         :param set_of_clusters (set of Cluster): the set of other clusters for merge options
         :return: the merged cluster
         """
+        # Check if the given cluster is already k-anonymous
         is_cluster_k_ano = cluster.is_k_anonymous(self.k)
+
+        # Continue merging until the cluster is k-anonymous
         while not is_cluster_k_ano:
             min_enlargement = float('inf')
-
+            # Iterate through the set of clusters to find the best cluster to merge with
             for c in set_of_clusters:
                 # Calculation of the potential size of the merged cluster
                 merged_size = len(cluster) + len(c)
 
                 enlargement = self.Enlargement(cluster, c.make_tuple_from_qi(c.t))
 
+                # Update the minimum enlargement and corresponding cluster if a better option is found
                 if enlargement < min_enlargement:
                     min_enlargement = enlargement
                     min_enlargement_cluster = c
@@ -267,6 +304,7 @@ class Castle:
             for tupel in min_enlargement_cluster.data:
                 cluster.add_tupel(tupel)
 
+            # Remove the merged cluster from the set of non-anonymized clusters
             for i in self.not_anonymized_clusters:
                 if i.check_cluster_if_equal(min_enlargement_cluster):
                     self.not_anonymized_clusters.remove(i)
@@ -287,20 +325,27 @@ class Castle:
         :return: the best cluster
         """
         enlargements = set()
+
+        # If there are no non-anonymized clusters, return None
         if not self.not_anonymized_clusters:
             return None
 
+        # Calculate the enlargement for each non-anonymized cluster
         for cluster in self.not_anonymized_clusters:
             enlargement = self.Enlargement(cluster, tuple)
             enlargements.add(enlargement)
-        min_enlargement = min(enlargements)
 
+        # Find the minimum enlargement value
+        min_enlargement = min(enlargements)
+        # Find clusters that have the minimum enlargement value
         set_cluster_min = [C for C in self.not_anonymized_clusters if self.Enlargement(C, tuple) == min_enlargement]
         set_c_ok = set()
         for cluster in set_cluster_min:
             IL_cluster = self.Enlargement(cluster, tuple)
             if IL_cluster <= self.tao:
                 set_c_ok.add(cluster)
+
+        # If no cluster meets the InfoLoss criteria, select the cluster with the smallest size if there are enough clusters
         if not set_c_ok:
             if len(self.not_anonymized_clusters) >= self.beta:
                 return min(set_cluster_min, key=lambda cluster: len(cluster))
