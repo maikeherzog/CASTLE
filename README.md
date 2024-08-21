@@ -51,7 +51,7 @@ Beispiele zur Nutzung des CASTLE-Algorithmus finden Sie in der Datei `main.py`. 
 - ***name_dataset:*** Der Parameter name_dataset enthält den Namen des verwendeten Datensatzes, so wie er im Dictionary `attribute_properties` definiert ist. Das Dictionary wird zur Zuordnung der Domänen zu den Attributen verwendet.
 
 ### Anpassung der Generalisierungshierarchie
-Die Hierarchien für kategorische Attribute können in der Datei hierarchy_tree.py definiert und angepasst werden. Eine Zuordnung der Bäume zu den Attribute erfolgt im Dictionary `attribute_properties` in der Datei edit_data.py. Für die kontinuierlichen Attribute wird das Domainintervall ebenfalls im Dictionary `attribute_properties` definiert.
+Die Hierarchien für kategorische Attribute können in der Datei `hierarchy_tree.py` definiert und angepasst werden. Eine Zuordnung der Bäume zu den Attribute erfolgt im Dictionary `attribute_properties` in der Datei `edit_data.py`. Für die kontinuierlichen Attribute wird das Domainintervall ebenfalls im Dictionary `attribute_properties` definiert.
 
 ## Projektstruktur
 Die Projektstruktur ist wie folgt aufgebaut:
