@@ -24,6 +24,8 @@ class Castle:
         :param delta (int): the delay constraint
         :param beta (int): Threshold for non-annonymous clusters
         :param name_dataset (str): the name of the dataset
+
+        :return: list of anonymized tuples
         """
         self.not_anonymized_clusters = set()
         self.anonymized_clusters = set()
@@ -87,6 +89,7 @@ class Castle:
             self.pos_stream += 1
         #logging after
         logger.info(f'Castle Algorithmus beendet, Anzahl anonymisierte Cluster: {len(self.anonymized_clusters)}, Anzahl alle Cluster: {self.num_cluster}, kompletter Durchschnitt ILoss: {self.average_Loss_all()}, Durchschnittlicher ILoss letzte Cluster: {self.average_Loss()}, Durchschnittlicher ILoss über Cluster:{self.average_loss_all_clusters()}, InfoLoss anonymisierte Cluster: {self.average_Loss_all_ano_cluster()}')
+        return self.output_anonym
 
     def delay_constraint(self, tuple_prime):
         """

@@ -42,20 +42,20 @@ data = Data(data_tuples_castle, [2, 12], [])
 # Create the CASTLE instances with the parameters
 castle = Castle(data.data, 200, 10000, 50, "adult_castle")
 # Execute the CASTLE algorithm
-castle.castle_algo(data.data)
+print(castle.castle_algo(data.data))
 print("Average InfoLoss: ", castle.average_Loss_all())
 
 # Repeat with other parameters
 castle = Castle(data.data, 100, 10000, 50, "adult_castle")
-castle.castle_algo(data.data)
+print(castle.castle_algo(data.data))
 print("Average InfoLoss: ", castle.average_Loss_all())
 
 castle = Castle(data.data, 50, 10000, 50, "adult_castle")
-castle.castle_algo(data.data)
+print(castle.castle_algo(data.data))
 print("Average InfoLoss: ", castle.average_Loss_all())
 
 castle = Castle(data.data, 20, 10000, 50, "adult_castle")
-castle.castle_algo(data.data)
+print(castle.castle_algo(data.data))
 print("Average InfoLoss: ", castle.average_Loss_all())
 
 # ILoss und QI
