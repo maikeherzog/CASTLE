@@ -268,13 +268,13 @@ class TestIloss(unittest.TestCase):
         self.assertEqual(iLoss3, 0.0)
         self.assertEqual(iLoss4, 6/102)
 
-    def test_VInfoLoss_cathegorical(self):
+    def test_VInfoLoss_categorical(self):
         castle = Castle(None, 6, 5, 2, "easy_data")
-        iLoss1 = castle.VInfoLoss_cathegorical(['Masters'], education_tree_easy)
-        iLoss2 = castle.VInfoLoss_cathegorical(['Masters', 'Bachelors'], education_tree_easy)
-        iLoss3 = castle.VInfoLoss_cathegorical(['Bachelors', 'Masters', 'Primary School'], education_tree_easy)
-        iLoss4 = castle.VInfoLoss_cathegorical('University', education_tree_easy)
-        iLoss5 = castle.VInfoLoss_cathegorical('Bachelors', education_tree_easy)
+        iLoss1 = castle.VInfoLoss_categorical(['Masters'], education_tree_easy)
+        iLoss2 = castle.VInfoLoss_categorical(['Masters', 'Bachelors'], education_tree_easy)
+        iLoss3 = castle.VInfoLoss_categorical(['Bachelors', 'Masters', 'Primary School'], education_tree_easy)
+        iLoss4 = castle.VInfoLoss_categorical('University', education_tree_easy)
+        iLoss5 = castle.VInfoLoss_categorical('Bachelors', education_tree_easy)
 
         self.assertEqual(iLoss1, 0.0)
         self.assertEqual(iLoss2, 0.5)

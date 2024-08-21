@@ -429,7 +429,7 @@ class Castle:
             if attribute_properties[self.name_dataset][i]['type'] == 'continuous':
                 new_cluster[i] = self.adjust_interval(tupel[i], cluster[i])
 
-            elif attribute_properties[self.name_dataset][i]['type'] == 'cathegorical':
+            elif attribute_properties[self.name_dataset][i]['type'] == 'categorical':
                 new_cluster[i] = self.add_unique_string_to_list(tupel[i], cluster[i])
 
         return tuple(new_cluster)
@@ -503,8 +503,8 @@ class Castle:
         info_loss = 0
         if attribute_properties[self.name_dataset][pos]['type'] == 'continuous':
             info_loss = self.VInfoLoss_continuos(attribut, attribute_properties[self.name_dataset][pos]['interval'])
-        elif attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
-            info_loss = self.VInfoLoss_cathegorical(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
+        elif attribute_properties[self.name_dataset][pos]['type'] == 'categorical':
+            info_loss = self.VInfoLoss_categorical(attribut, attribute_properties[self.name_dataset][pos]['hierarchy_tree'])
         return info_loss
 
 
@@ -522,7 +522,7 @@ class Castle:
             return 0
         return (attribut_range[1] - attribut_range[0]) / (domain_range[1] - domain_range[0])
 
-    def VInfoLoss_cathegorical(self, attribut_range, domain_tree):
+    def VInfoLoss_categorical(self, attribut_range, domain_tree):
         """
         Calculates the VInfoLoss of a categorical attribute.
         :param attribut_range (str or list): the range of the attribute

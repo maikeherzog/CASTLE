@@ -47,7 +47,7 @@ class Cluster:
             if tuple_prime[i] < self.t[i][0] or tuple_prime[i] > self.t[i][1]:
               return False
 
-          elif attribute_properties[self.name_dataset][i]['type'] == 'cathegorical':
+          elif attribute_properties[self.name_dataset][i]['type'] == 'categorical':
             if tuple_prime[i] not in self.t[i]:
               return False
 
@@ -64,7 +64,7 @@ class Cluster:
             if attribute_properties[self.name_dataset][i]['type'] == 'continuous':
               cluster[i] = self.adjust_interval(t.qi[i], cluster[i])
 
-            elif attribute_properties[self.name_dataset][i]['type'] == 'cathegorical':
+            elif attribute_properties[self.name_dataset][i]['type'] == 'categorical':
                 cluster[i] = self.add_unique_string_to_list(t.qi[i], cluster[i])
         self.t = tuple(cluster)
 
@@ -202,7 +202,7 @@ class Cluster:
         """
         qi = list(qi)
         for pos in range(len(qi)):
-            if attribute_properties[self.name_dataset][pos]['type'] == 'cathegorical':
+            if attribute_properties[self.name_dataset][pos]['type'] == 'categorical':
               qi[pos] = find_generalization(attribute_properties[self.name_dataset][pos]['hierarchy_tree'], qi[pos])
         return tuple(qi)
 
