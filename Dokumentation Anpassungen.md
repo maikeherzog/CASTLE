@@ -1,5 +1,5 @@
 # Anpassungen zu CASTLE mithilfe des Originalen Codes zum Paper
-In der ursprünglichen Python Implementierung auf dem main Branch konnten die im CASTLE Paper von Jianneng Cao et al., 2011 veröffentlichten Ergebnisse nicht komplett reproduziert werden. Aus diesem Grund wurde probiert mithilfe des originalen Codes, welcher uns von ... bereitgestellt wurde, unseren Code anzupassen und zu optimieren. Die dabei vorgenommenen Änderungen und Ergebnisse werden hier zusammengefasst.
+In der ursprünglichen Python Implementierung auf dem main Branch konnten die im CASTLE Paper von Jianneng Cao et al., 2011 veröffentlichten Ergebnisse nicht komplett reproduziert werden. Aus diesem Grund wurde probiert mithilfe des originalen Codes, welcher uns von Jianneng Cao bereitgestellt wurde, unseren Code anzupassen und zu optimieren. Die dabei vorgenommenen Änderungen und Ergebnisse werden hier zusammengefasst.
 
 ## Inhalt
 
@@ -24,6 +24,53 @@ In der ursprünglichen Python Implementierung auf dem main Branch konnten die im
 ### best_selection()
 - Im Python Code wird für ein Tuple t das Cluster gewählt mit dem geringsten Informationsverlusst. Gab es z.B. vor dem Tupel $t$ ein weiteres Tupel $t'$ mit den gleichen Quasiidentifikatoren, dann wurde bereits ein Cluster $C'$ über $t'$ gebildet. Da es zu keinem Informationsverlusst führen würde, wenn man $t$ nun ebenfalls in dieses Cluster einfügen würde, gibt die best_selection Funktion $C'$ zurück.
 - In der originalen Implementierung funktioniert dies ein bisschen anders. Hier werden solange neue Cluster gebildet, bis die obere Grenze (upper_bound) an nicht $k_s$- anonymisierten Clustern erreicht ist. Dies bedeutet also für das Beispiel, dass für win(t) nicht $C'$ zurück gegeben werden würde, sondern ein neues Cluster $C$ gebildet werden würde, wenn die upper_bound noch nicht erreicht ist.
+- Um dem Python Code die gleiche Funktionsweise zu geben, wurden die best_selection() Funktion folgendermaßen angepasst:
+  ```python
+  def best_selection(self, tuple)-> Cluster:
+        """
+        Selects the best cluster for a tuple.
+        :param tuple (Tuple): the tuple to select the best cluster
+        :return: the best cluster
+        """
+        enlargements = set()
+
+        # If there are no non-anonymized clusters, return None
+        if not self.not_anonymized_clusters:
+            return None
+        # If the number of possible not_anonymized_clusters is not reached
+        if len(self.not_anonymized_clusters) < self.mu:
+            return None
+
+        # Calculate the enlargement for each non-anonymized cluster
+        for cluster in self.not_anonymized_clusters:
+            enlargement = self.Enlargement(cluster, tuple)
+            enlargements.add(enlargement)
+
+        # Find the minimum enlargement value
+        min_enlargement = min(enlargements)
+        # Find clusters that have the minimum enlargement value
+        set_cluster_min = [C for C in self.not_anonymized_clusters if self.Enlargement(C, tuple) == min_enlargement]
+        set_c_ok = set()
+        for cluster in set_cluster_min:
+            IL_cluster = self.Enlargement(cluster, tuple)
+            if IL_cluster <= self.tao:
+                set_c_ok.add(cluster)
+
+        # If no cluster meets the InfoLoss criteria, select the cluster with the smallest size if there are enough clusters
+        if not set_c_ok:
+            if len(self.not_anonymized_clusters) >= self.beta:
+                return min(set_cluster_min, key=lambda cluster: len(cluster))
+            else:
+                return None
+        else:
+            return min(set_c_ok, key=lambda cluster: len(cluster))
+  ```
+- Mit
+  ```python
+  if len(self.not_anonymized_clusters) < self.mu:
+            return None
+  ```
+  stellen wir sicher, dass solange noch nicht $\mu$ Cluster erstellt wurden, neue Cluster erstellt werden.
 - Diese Änderung erzeugte im ersten Versuch einen um 0.3 verringerten Informationsverlusst. Leider konnten wir durch erneute Ausführungen die Ergebnisse nicht konstant bestätigen. Viellmehr schwankte der Informationsverlusst (s. Tabellen)
 
 k= 100
