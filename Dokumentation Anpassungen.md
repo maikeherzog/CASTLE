@@ -3,14 +3,12 @@ In der ursprünglichen Python Implementierung auf dem main Branch konnten die im
 
 ## Inhalt
 
-- [Anpassungen zu CASTLE mithilfe des Originalen Codes zum Paper](#anpassungen-zu-castle-mithilfe-des-originalen-codes-zum-paper)
-  - [Inhalt](#inhalt)
-  - [Unterschiede in der Benennung](#unterschiede-in-der-benennung)
-  - [Unterschiede bei den Funktionen](#unterschiede-bei-den-funktionen)
-    - [best\_selection()](#best_selection)
-    - [merge\_left\_clusters()](#merge_left_clusters)
-  - [Sonstige Beobachtungen](#sonstige-beobachtungen)
-  - [Weitere Fragen](#weitere-fragen)
+- [Unterschiede in der Benennung](#unterschiede-in-der-benennung)
+- [Unterschiede bei den Funktionen](#unterschiede-bei-den-funktionen)
+  - [best\_selection()](#best_selection)
+  - [merge\_left\_clusters()](#merge_left_clusters)
+- [Sonstige Beobachtungen](#sonstige-beobachtungen)
+- [Weitere Fragen](#weitere-fragen)
 
 
 ## Unterschiede in der Benennung 
